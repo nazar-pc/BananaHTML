@@ -1,5 +1,12 @@
 ### [Methods](#methods) [Tags rendering](#tags-rendering) [Special processing](#special-processing) [Pseudo-attributes](#pseudo-attributes) [Constants](#constants)
 
+For shorter syntax in all examples alias `h` is used:
+
+```php
+<?php
+use	nazarpc\BananaHTML as h;
+```
+
 <a id="methods" />
 ###[Up](#wrapper) Methods
 
