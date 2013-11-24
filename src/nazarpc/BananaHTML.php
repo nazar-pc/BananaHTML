@@ -1157,7 +1157,7 @@ class BananaHTML {
 			static::inserts_processing($data, $insert);
 			$html	= '';
 			foreach ($data as $d) {
-				if (method_exists(get_class(), $tag)) {
+				if (method_exists(get_called_class(), $tag)) {
 					$html			.= static::$tag($d[0], $d[1]);
 				} elseif (in_array($tag, static::$unpaired_tags)) {
 					$d[1]['tag']	= $tag;
@@ -1169,7 +1169,7 @@ class BananaHTML {
 			}
 			return $html;
 		}
-		if (method_exists(get_class(), $tag)) {
+		if (method_exists(get_called_class(), $tag)) {
 			$in				= static::$tag($in, $attrs);
 		} elseif (in_array($tag, static::$unpaired_tags)) {
 			$attrs['tag']	= $tag;
