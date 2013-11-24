@@ -71,7 +71,9 @@ echo h::{'a#github.cool-link.two-classes[href=http://github.com]'}(
 		'data-is-supported'	=> 'yes'
 	]
 );
-//<a id="github" class="cool-link two-classes" href="http://github.com" data-is-supported="yes">GitHub</a>
+//<a id="github" class="cool-link two-classes" href="http://github.com" data-is-supported="yes">
+//	GitHub
+//</a>
 
 echo h::{'ul.unordered-list li| span'}(
 	'one',
