@@ -1,6 +1,6 @@
 {
 	"name"        : "nazar-pc/bananahtml",
-	"version"     : "1.0.0",
+	"version"     : "1.0.1",
 	"description" : "BananaHTML - single class that makes HTML generating easier",
 	"keywords"    : ["banana", "html"],
 	"homepage"    : "https://github.com/nazar-pc/BananaHTML",
