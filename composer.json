@@ -1,6 +1,5 @@
 {
 	"name"        : "nazar-pc/bananahtml",
-	"version"     : "1.0.1",
 	"description" : "BananaHTML - single class that makes HTML generating easier",
 	"keywords"    : ["banana", "html"],
 	"homepage"    : "https://github.com/nazar-pc/BananaHTML",
@@ -20,6 +19,11 @@
 	"autoload"    : {
 		"psr-0" : {
 			"nazarpc" : "src/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0-dev"
 		}
 	}
 }
