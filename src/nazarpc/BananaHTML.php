@@ -3,7 +3,7 @@
  * @package		BananaHTML
  * @version		1.0.1
  * @author		Nazar Mokrynskyi <nazar@mokrynskyi.com>
- * @copyright	Copyright (c) 2011-2013, Nazar Mokrynskyi
+ * @copyright	Copyright (c) 2011-2014, Nazar Mokrynskyi
  * @license		MIT License, see license.txt
  */
 namespace	nazarpc;
@@ -179,6 +179,7 @@ class BananaHTML {
 		if (substr($url, 0, 1) == '#') {
 			$url	= static::url_with_hash($url);
 		} elseif (
+			substr($url, 0, 2) != '$i' &&
 			substr($url, 0, 5) != 'data:' &&
 			substr($url, 0, 1) != '/' &&
 			substr($url, 0, 7) != 'http://' &&
