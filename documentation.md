@@ -599,7 +599,7 @@ Allows to cancel wrapping of checkboxes with &lt;label&gt;
 Allows to change quotation symbol for attributes, " by default.
 
 #### insert
-This attribute may be or two-dimentional array. It is used for substituting values into attributes template. Example, how it works:
+This attribute may be or two-dimensional array. It is used for substituting values into attributes template. Example, how it works:
 ```php
 h::a(
 	'$i[text]',
