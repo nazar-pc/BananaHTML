@@ -629,7 +629,7 @@ results
 ```
 Or even more complex form:
 ```php
-h::{'input[id=$i[id]][type=checkbox][checked1=$i[value]][value=1]'}([
+h::{'input[id=$i[id]][type=checkbox][checked=$i[value]][value=1]'}([
 	'insert'	=> [
 		[
 			'id'	=> 'first_checkbox',
@@ -649,17 +649,17 @@ h::{'input[id=$i[id]][type=checkbox][checked1=$i[value]][value=1]'}([
 results
 ```html
 <span>
-	<input checked1="1" id="first_checkbox" type="checkbox" value="1"><label for="first_checkbox">
+	<input checked id="first_checkbox" type="checkbox" value="1"><label for="first_checkbox">
 		&nbsp;
 	</label>
 </span>
 <span>
-	<input checked1="0" id="second_checkbox" type="checkbox" value="1"><label for="second_checkbox">
+	<input id="second_checkbox" type="checkbox" value="1"><label for="second_checkbox">
 		&nbsp;
 	</label>
 </span>
 <span>
-	<input checked1="1" id="third_checkbox" type="checkbox" value="1"><label for="third_checkbox">
+	<input checked id="third_checkbox" type="checkbox" value="1"><label for="third_checkbox">
 		&nbsp;
 	</label>
 </span>
