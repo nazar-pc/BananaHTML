@@ -29,6 +29,7 @@ Let's consider how it works on examples.
 
 #### Simplest:
 ```php
+<?php
 h::div('Content')
 ```
 results
@@ -39,6 +40,7 @@ results
 ```
 #### With class:
 ```php
+<?php
 h::{'h1.cs-center'}('Content')
 ```
 results
@@ -49,6 +51,7 @@ results
 ```
 #### Even with several classes:
 ```php
+<?php
 h::{'p.cs-center.more'}('Content')
 ```
 results
@@ -59,6 +62,7 @@ results
 ```
 #### Attributes and id are also supported:
 ```php
+<?php
 h::{'td#cell[colspan=2]'}('Content')
 ```
 results
@@ -69,6 +73,7 @@ results
 ```
 #### Some attributes does not require value:
 ```php
+<?php
 h::{'input#id[required]'}()
 ```
 results
@@ -77,6 +82,7 @@ results
 ```
 #### If id, classes and attributes are used together (in any combination) - order *tag/id/classes/attributes* is important:
 ```php
+<?php
 h::{'td#cell.table-cell.red[colspan=2][rowspan=3]'}('Content')
 ```
 results
@@ -87,6 +93,7 @@ results
 ```
 #### If tag is omitted - assumed that it is *div* tag:
 ```php
+<?php
 h::{'#element.class'}('Content')
 ```
 results
@@ -97,6 +104,7 @@ results
 ```
 #### Other attributes may be specified as well:
 ```php
+<?php
 h::{'h1.main-title'}(
 	'Heading',
 	[
@@ -112,6 +120,7 @@ results
 ```
 #### And, of course, it is possible to render chained tags at once:
 ```php
+<?php
 h::{'tr td'}('Content')
 ```
 results
@@ -126,6 +135,7 @@ But as you can see - spaces separates chained tags, and can't be used for attrib
 
 #### For many cases it is useful to work with "indexed" (!important) arrays:
 ```php
+<?php
 h::{'tr td'}([
 	'First cell',
 	'Second cell',
@@ -150,6 +160,7 @@ If array specified - latest tag will be generated for every element of array.
 
 #### Naturally, if you do not get this list from somewhere, but write it from the beginning - you can write it without square braces:
 ```php
+<?php
 h::{'tr td'}(
 	'First cell',
 	'Second cell',
@@ -172,6 +183,7 @@ results
 ```
 #### Again, naturally, elements may be not strings, but arrays (as it may be specified for one tag without array, recall additional attributes):
 ```php
+<?php
 h::{'tr.row td.cs-left[style=text-align:left;][colspan=2]'}(
 	'First cell',
 	[
@@ -212,6 +224,7 @@ There are several notices here:
 
 #### One more trick (beyond CSS specification) is shifting of element for array iteration:
 ```php
+<?php
 h::{'tr| td'}([
 	'First cell',
 	'Second cell',
@@ -240,6 +253,7 @@ As you can see, pipe symbol *|* forces to generate new cells, rows, not columns.
 
 #### Continuation of previous example - multidimensional array:
 ```php
+<?php
 h::{'tr| td'}([
 	[
 		'First row, first column',
@@ -272,6 +286,7 @@ results
 ```
 #### It is possible to render several elements from group with common attributes:
 ```php
+<?php
 h::{'tr| td'}([
 	[
 		'First row, first column',
@@ -319,10 +334,12 @@ Some tags have special syntax features, that extends general rules described bef
 * input
 * style
 * textarea
+* Web Components
 
 #### br
 Does not follow general rules, accept as parameter only number (default 1) - how much times br tag should be rendered:
 ```php
+<?php
 h::br()
 ```
 results
@@ -331,6 +348,7 @@ results
 ```
 This tag is unpaired, so, no close tag.
 ```php
+<?php
 h::br(3)
 ```
 results
@@ -345,6 +363,7 @@ These tags have a little bit extended syntax. First parameter may be not a strin
 
 ##### If array is indexed - elements of array will be generated as *option* tags (so, for rendering of several datalist/select tags with array it is necessary to take first parameter as array of array):
 ```php
+<?php
 h::select(
 	[
 		'first',
@@ -370,6 +389,7 @@ Also, here is used *selected* attribute, it is rendered as single, but specified
 
 ##### There is a little bit extended form, when value of *option* tag should be different from inner content:
 ```php
+<?php
 h::select(
 	[
 		'in'	=> [
@@ -412,6 +432,7 @@ Works by general rules, but:
 
 ##### Example of simplest input:
 ```php
+<?php
 h::{'input[name=login]'}()
 ```
 results
@@ -420,6 +441,7 @@ results
 ```
 ##### Example of *checkbox* input:
 ```php
+<?php
 h::{'input[name=agree][type=checkbox][value=1][checked=1]'}()
 ```
 results
@@ -434,6 +456,7 @@ If value of *value* attribute is equal to *checked*, corresponding attribute wil
 
 ##### Several checkboxes at once:
 ```php
+<?php
 h::{'input[type=checkbox][checked=1]'}([
 	[
 		'name'	=> 'check1',
@@ -462,6 +485,7 @@ As we need indexed array to render several tags - we take all into additional sq
 
 ##### Usually checkboxes are accompanied with some short name (or description), so we can add it too:
 ```php
+<?php
 h::{'input[name=agree][type=checkbox][value=1][checked=1]'}([
 	'in'	=> 'Checkbox #1'
 ])
@@ -476,6 +500,7 @@ results
 ```
 ##### Example of *radio* input:
 ```php
+<?php
 h::{'input[type=radio]'}([
 	'checked'	=> 1,
 	'value'		=> [0, 1],
@@ -499,6 +524,7 @@ Works by general rules, but if *type* attribute is not specified - it will be au
 #### textarea
 Works by general rules, but accepts input to be array of strings:
 ```php
+<?php
 h::textarea([
 	'line1',
 	'line2',
@@ -510,6 +536,22 @@ results
 <textarea>line1
 line2
 line3</textarea>
+
+#### Web Components
+This is a bit different, applied to any custom tags:
+```php
+<?php
+h::custom_tag('text')
+````
+results
+```html
+<custom-tag>
+	text
+</custom-tag>
+```
+
+Basically, `_` being replaced by `-`.
+
 ```
 <a id="pseudo-attributes" />
 ###[Up](#wrapper) Pseudo-attributes
@@ -529,10 +571,12 @@ Allows to add custom string to the end of attributes list before closing &gt;
 #### in
 Widely used pseudo attribute, it was already used in examples before. It contains content, which is placed between two pairs of tag. For example:
 ```php
+<?php
 h::{'p.cs-right'}('Content')
 ```
 similar to
 ```php
+<?php
 h::p([
 	'in'	=> 'Content',
 	'class'	=> 'cs-right'
@@ -549,6 +593,7 @@ Also, as you can see, you can specify class or any other attribute in the first 
 #### level
 Special indentation attribute, in most cases it is not specified directly (and assumed equal to 1). The best way to show difference - examples:
 ```php
+<?php
 h::p('Content')
 ```
 results
@@ -559,6 +604,7 @@ results
 ```
 But:
 ```php
+<?php
 h::{'p[level=0]'}('Content')
 ```
 results
@@ -567,6 +613,7 @@ results
 ```
 And:
 ```php
+<?php
 h::{'p[level=3]'}('Content')
 ```
 
@@ -579,6 +626,7 @@ results
 #### data-title
 If this attribute is specified - it value will be used in tooltip for specified element (with the help of jQuery plugin), attribute actually after some preprocessing will be present in resulting HTML, also class *cs-info* will be added automatically:
 ```php
+<?php
 h::p(
 	'Text',
 	[
@@ -601,6 +649,7 @@ Allows to change quotation symbol for attributes, " by default.
 #### insert
 This attribute may be or two-dimensional array. It is used for substituting values into attributes template. Example, how it works:
 ```php
+<?php
 h::a(
 	'$i[text]',
 	[
@@ -629,6 +678,7 @@ results
 ```
 Or even more complex form:
 ```php
+<?php
 h::{'input[id=$i[id]][type=checkbox][checked=$i[value]][value=1]'}([
 	'insert'	=> [
 		[
@@ -675,6 +725,7 @@ h class doesn't defines global constants by itself, but uses some optional const
 #### XHTML_TAGS_STYLE
 If this constant defined as *true* (default *false*) - resulting HTML will satisfy XHTML standards:
 ```php
+<?php
 h::{'input[required]'}()
 ```
 results
