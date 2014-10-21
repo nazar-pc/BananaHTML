@@ -1,12 +1,15 @@
 {
 	"name"        : "nazar-pc/bananahtml",
 	"description" : "BananaHTML - single class that makes HTML generating easier",
-	"keywords"    : ["banana", "html"],
+	"keywords"    : [
+		"banana",
+		"html",
+		"template"
+	],
 	"homepage"    : "https://github.com/nazar-pc/BananaHTML",
 	"license"     : "MIT",
 	"require"     : {
-		"php"          : ">=5.4",
-		"nazar-pc/upf" : "*"
+		"php" : ">=5.4"
 	},
 	"authors"     : [
 		{
@@ -21,9 +24,9 @@
 			"nazarpc" : "src/"
 		}
 	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.1-dev"
+	"extra"       : {
+		"branch-alias" : {
+			"dev-master" : "2.0-dev"
 		}
 	}
 }

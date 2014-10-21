@@ -41,7 +41,6 @@ Banana means nothing, I just recalled minions from "Despicable Me" when creating
 ## Requirements:
 
 * PHP 5.4+
-* UPF (composer dependency)
 
 ## How to use?
 

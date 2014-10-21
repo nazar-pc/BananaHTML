@@ -427,8 +427,7 @@ Works by general rules, but if *alt* attribute is not specified - it will be aut
 Works by general rules, but:
 * accepts one parameter or zero very often
 * if *type* attribute is not specified - it will be automatically set to *text*
-* behaves differently for different values of *type* attribute
-* may be wrapped with *span* and accompanied with *label* tags
+* behaves slightly different for different values of *type* attribute
 
 ##### Example of simplest input:
 ```php
@@ -446,13 +445,9 @@ h::{'input[name=agree][type=checkbox][value=1][checked=1]'}()
 ```
 results
 ```html
-<span>
-	<input id="input_51961fc97fb6f" name="agree" type="checkbox" checked value="1"><label for="input_51961fc97fb6f">
-		&nbsp;
-	</label>
-</span>
+<input name="agree" checked type="checkbox" value="1"> 
 ```
-If value of *value* attribute is equal to *checked*, corresponding attribute will be added, also label with empty inner content added (if no *id* specified - it is generated), and everything in wrapped by *span* (it is needed for jQuery UI, which is automatically applied).
+If value of *value* attribute is equal to *checked*, corresponding attribute will be added.
 
 ##### Several checkboxes at once:
 ```php
@@ -470,16 +465,8 @@ h::{'input[type=checkbox][checked=1]'}([
 ```
 results
 ```html
-<span>
-	<input id="input_51961f99cb059" name="check1" checked type="checkbox" value="1"><label for="input_51961f99cb059">
-		&nbsp;
-	</label>
-</span>
-<span>
-	<input id="input_51961f99cb1ad" name="check2" type="checkbox" value="2"><label for="input_51961f99cb1ad">
-		&nbsp;
-	</label>
-</span>
+<input checked name="check1" type="checkbox" value="1"> 
+<input name="check2" type="checkbox" value="2"> 
 ```
 As we need indexed array to render several tags - we take all into additional square braces.
 
@@ -492,11 +479,7 @@ h::{'input[name=agree][type=checkbox][value=1][checked=1]'}([
 ```
 results
 ```html
-<span>
-	<input  checked id="input_51961eb6721e4" name="agree" type="checkbox" value="1"><label for="input_51961eb6721e4">
-		Checkbox #1
-	</label>
-</span>
+<input name="agree" checked type="checkbox" value="1"> Checkbox #1
 ```
 ##### Example of *radio* input:
 ```php
@@ -509,12 +492,8 @@ h::{'input[type=radio]'}([
 ```
 results
 ```html
-<input id="input_51962143488f1" type="radio" value="0"><label for="input_51962143488f1">
-	Off
-</label>
-<input  checked id="input_5196214348a24" type="radio" value="1"><label for="input_5196214348a24">
-	On
-</label>
+<input id="input_5446abc965565" type="radio" value="0"> Off
+<input checked id="input_5446abc9655f7" type="radio" value="1"> On
 ```
 *checked* attribute works like for *checkbox* type, if *checked* attribute is not specified - *checked* will be added to the first element. *value* and *in* are specified in form of arrays.
 
@@ -561,7 +540,6 @@ Such attributes are not rendered as regular attributes, but they are used to mak
 * in
 * level
 * data-title
-* no-label
 * quote
 * insert
 
@@ -640,8 +618,6 @@ results
 	Text
 </p>
 ```
-#### no-label
-Allows to cancel wrapping of checkboxes with &lt;label&gt;
 
 #### quote
 Allows to change quotation symbol for attributes, " by default.
