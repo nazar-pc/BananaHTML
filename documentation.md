@@ -542,7 +542,7 @@ This is a bit different, applied to any custom tags:
 ```php
 <?php
 h::custom_tag('text')
-````
+```
 results
 ```html
 <custom-tag>
