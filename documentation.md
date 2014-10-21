@@ -7,7 +7,7 @@ For shorter syntax in all examples alias `h` is used:
 use	nazarpc\BananaHTML as h;
 ```
 
-<a id="methods" />
+<a name="methods" />
 ###[Up](#wrapper) Methods
 
 h class has several general-purpose methods besides other "magic":
@@ -20,7 +20,7 @@ Adds, if necessary, slash or domain at the beginning of the url, provides correc
 #### string level($in : string, $level = 1 : int)
 Line padding for a structured source code (adds tabs)
 
-<a id="tags-rendering" />
+<a name="tags-rendering" />
 ###[Up](#wrapper) Tags rendering
 
 Tags generation is done with the help of simplest CSS selectors and inexistent methods (magic with *__callStatic()*).
@@ -322,7 +322,7 @@ results
 	</td>
 <tr>
 ```
-<a id="special-processing" />
+<a name="special-processing" />
 ###[Up](#wrapper) Special processing
 
 Some tags have special syntax features, that extends general rules described before, they are:
@@ -536,6 +536,7 @@ results
 <textarea>line1
 line2
 line3</textarea>
+```
 
 #### Web Components
 This is a bit different, applied to any custom tags:
@@ -552,7 +553,7 @@ results
 
 Basically, `_` being replaced by `-`.
 
-<a id="pseudo-attributes" />
+<a name="pseudo-attributes" />
 ###[Up](#wrapper) Pseudo-attributes
 
 Such attributes are not rendered as regular attributes, but they are used to make possible some functionality.
@@ -715,7 +716,7 @@ results
 ```
 As you can see, data inside template are accessible like through `$i` variable.
 
-<a id="constants" />
+<a name="constants" />
 ###[Up](#wrapper) Constants
 
 h class doesn't defines global constants by itself, but uses some optional constants that impacts on its behavior. As for now there is only one constant, that is used there:
