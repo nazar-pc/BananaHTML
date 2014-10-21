@@ -552,7 +552,6 @@ results
 
 Basically, `_` being replaced by `-`.
 
-```
 <a id="pseudo-attributes" />
 ###[Up](#wrapper) Pseudo-attributes
 
