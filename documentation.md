@@ -539,7 +539,6 @@ Such attributes are not rendered as regular attributes, but they are used to mak
 * add
 * in
 * level
-* data-title
 * quote
 * insert
 
@@ -599,23 +598,6 @@ results
 ```html
 <p>
 			Content
-</p>
-```
-#### data-title
-If this attribute is specified - it value will be used in tooltip for specified element (with the help of jQuery plugin), attribute actually after some preprocessing will be present in resulting HTML, also class *cs-info* will be added automatically:
-```php
-<?php
-h::p(
-	'Text',
-	[
-		'data-title'	=> 'Tooltip'
-	]
-)
-```
-results
-```html
-<p class="cs-info" data-title="Tooltip">
-	Text
 </p>
 ```
 
