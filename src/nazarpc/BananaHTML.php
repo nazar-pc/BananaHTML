@@ -1,7 +1,7 @@
 <?php
 /**
  * @package		BananaHTML
- * @version		2.1.0
+ * @version		2.1.1
  * @author		Nazar Mokrynskyi <nazar@mokrynskyi.com>
  * @copyright	Copyright (c) 2011-2014, Nazar Mokrynskyi
  * @license		MIT License, see license.txt
@@ -491,6 +491,7 @@ class BananaHTML {
 			}
 			$data['selected']	= (array)$data['selected'];
 			if (isset($data['disabled'])) {
+				$data['disabled']	= (array)$data['disabled'];
 				$data['selected']	= array_diff($data['selected'], $data['disabled']);
 			} else {
 				$data['disabled']	= [];
