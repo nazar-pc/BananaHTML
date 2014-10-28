@@ -656,21 +656,9 @@ h::{'input[id=$i[id]][type=checkbox][checked=$i[value]][value=1]'}([
 ```
 results
 ```html
-<span>
-	<input checked id="first_checkbox" type="checkbox" value="1"><label for="first_checkbox">
-		&nbsp;
-	</label>
-</span>
-<span>
-	<input id="second_checkbox" type="checkbox" value="1"><label for="second_checkbox">
-		&nbsp;
-	</label>
-</span>
-<span>
-	<input checked id="third_checkbox" type="checkbox" value="1"><label for="third_checkbox">
-		&nbsp;
-	</label>
-</span>
+<input id="first_checkbox" checked type="checkbox" value="1"> 
+<input id="second_checkbox" type="checkbox" value="1"> 
+<input id="third_checkbox" checked type="checkbox" value="1">
 ```
 As you can see, data inside template are accessible like through `$i` variable.
 
