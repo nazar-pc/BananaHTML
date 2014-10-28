@@ -492,8 +492,8 @@ h::{'input[type=radio]'}([
 ```
 results
 ```html
-<input id="input_5446abc965565" type="radio" value="0"> Off
-<input checked id="input_5446abc9655f7" type="radio" value="1"> On
+<input type="radio" value="0"> Off
+<input checked type="radio" value="1"> On
 ```
 *checked* attribute works like for *checkbox* type, if *checked* attribute is not specified - *checked* will be added to the first element. *value* and *in* are specified in form of arrays.
 
