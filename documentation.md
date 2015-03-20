@@ -328,7 +328,7 @@ results
 Some tags have special syntax features, that extends general rules described before, they are:
 * br
 * button
-* datalist/select
+* datalist/select/optgroup
 * form
 * img
 * input
@@ -358,10 +358,10 @@ results
 #### button
 Works by general rules, but if *type* attribute is not specified - it will be automatically set to *button*.
 
-#### datalist/select
+#### datalist/select/optgroup
 These tags have a little bit extended syntax. First parameter may be not a string, but array.
 
-##### If array is indexed - elements of array will be generated as *option* tags (so, for rendering of several datalist/select tags with array it is necessary to take first parameter as array of array):
+##### If array is indexed - elements of array will be generated as *option* tags (so, for rendering of several datalist/select/optgroup tags with array it is necessary to take first parameter as array of array):
 ```php
 <?php
 h::select(
