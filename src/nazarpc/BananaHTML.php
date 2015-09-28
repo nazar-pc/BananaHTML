@@ -144,7 +144,16 @@ class BananaHTML {
 		if (isset($data['value'])) {
 			$data['value']		= static::prepare_attr_value($data['value']);
 		}
-		ksort($data);
+		uksort($data, function ($key_1, $key_2) use($data) {
+			// Next 2 `if` statements for consistent behavior under PHP5 and PHP7/HHVM
+			if (is_int($key_1)) {
+				$key_1 = $data[$key_1];
+			}
+			if (is_int($key_2)) {
+				$key_2 = $data[$key_2];
+			}
+			return strcmp($key_1, $key_2);
+		});
 		foreach ($data as $key => $value) {
 			if ($value === false) {
 				continue;

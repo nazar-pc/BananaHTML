@@ -17,4 +17,4 @@ echo h::input(
 ?>
 --EXPECT--
 <h1 class="main-title" title="Some heading title">Heading</h1>
-<input type="text" readonly>
+<input readonly type="text">

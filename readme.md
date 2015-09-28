@@ -1,3 +1,4 @@
+[![Build Status](https://img.shields.io/travis/nazar-pc/CleverStyle-CMS/master.svg?label=Travis CI)](https://travis-ci.org/nazar-pc/BananaHTML)
 ## BananaHTML - single class that makes HTML generating easier
 
 This is class for HTML code rendering in accordance with the standards of HTML5, and with useful syntax extensions for simpler usage
