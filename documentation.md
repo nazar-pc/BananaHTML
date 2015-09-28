@@ -237,13 +237,13 @@ results
 	<td>
 		First cell
 	</td>
-<tr>
 </tr>
+<tr>
 	<td>
 		Second cell
 	</td>
-<tr>
 </tr>
+<tr>
 	<td>
 		Third cell
 	</td>
@@ -274,7 +274,7 @@ results
 	<td>
 		First row, second column
 	</td>
-<tr>
+</tr>
 <tr>
 	<td>
 		Second row, first column
@@ -282,7 +282,7 @@ results
 	<td>
 		Second row, second column
 	</td>
-<tr>
+</tr>
 ```
 #### It is possible to render several elements from group with common attributes:
 ```php
@@ -312,7 +312,7 @@ results
 	<td>
 		First row, second column
 	</td>
-<tr>
+</tr>
 <tr>
 	<td class="cs-right">
 		Second row, first column
@@ -320,7 +320,7 @@ results
 	<td class="cs-right">
 		Second row, second column
 	</td>
-<tr>
+</tr>
 ```
 <a name="special-processing" />
 ###[Up](#wrapper) Special processing
@@ -445,7 +445,7 @@ h::{'input[name=agree][type=checkbox][value=1][checked=1]'}()
 ```
 results
 ```html
-<input name="agree" checked type="checkbox" value="1"> 
+<input name="agree" checked type="checkbox" value="1">
 ```
 If value of *value* attribute is equal to *checked*, corresponding attribute will be added.
 
@@ -465,8 +465,8 @@ h::{'input[type=checkbox][checked=1]'}([
 ```
 results
 ```html
-<input checked name="check1" type="checkbox" value="1"> 
-<input name="check2" type="checkbox" value="2"> 
+<input checked name="check1" type="checkbox" value="1">
+<input name="check2" type="checkbox" value="2">
 ```
 As we need indexed array to render several tags - we take all into additional square braces.
 
@@ -656,8 +656,8 @@ h::{'input[id=$i[id]][type=checkbox][checked=$i[value]][value=1]'}([
 ```
 results
 ```html
-<input id="first_checkbox" checked type="checkbox" value="1"> 
-<input id="second_checkbox" type="checkbox" value="1"> 
+<input id="first_checkbox" checked type="checkbox" value="1">
+<input id="second_checkbox" type="checkbox" value="1">
 <input id="third_checkbox" checked type="checkbox" value="1">
 ```
 As you can see, data inside template are accessible like through `$i` variable.
