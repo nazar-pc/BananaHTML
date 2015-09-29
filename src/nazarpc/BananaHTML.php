@@ -76,14 +76,13 @@ class BananaHTML {
 	 * @static
 	 *
 	 * @param array  $data
-	 * @param string $in
 	 * @param string $tag
-	 * @param string $add
+	 * @param string $in
+	 * @param string $attributes
 	 *
 	 * @return bool
 	 */
-	protected static function data_prepare ($data, &$in, &$tag, &$add) {
-		$q = '"';
+	protected static function data_prepare ($data, $tag, &$in, &$attributes) {
 		if (isset($data['in'])) {
 			if ($data['in'] === false) {
 				return false;
@@ -99,14 +98,8 @@ class BananaHTML {
 			}
 			unset($i, $item);
 		}
-		if (isset($data['tag'])) {
-			if ($data['tag']) {
-				$tag = $data['tag'];
-			}
-			if ($tag == 'img' && !isset($data['alt'])) {
-				$data['alt'] = '';
-			}
-			unset($data['tag']);
+		if ($tag == 'img' && !isset($data['alt'])) {
+			$data['alt'] = '';
 		}
 		if (isset($data['src'])) {
 			$data['src'] = str_replace(' ', '%20', $data['src']);
@@ -148,12 +141,12 @@ class BananaHTML {
 				continue;
 			}
 			if (is_int($key)) {
-				$add .= " $value";
+				$attributes .= " $value";
 			} elseif ($value === true) {
-				$add .= " $key";
+				$attributes .= " $key";
 			} else {
 				$value = static::prepare_attr_value($value);
-				$add .= " $key=$q$value$q";
+				$attributes .= " $key=\"$value\"";
 			}
 		}
 		return true;
@@ -253,17 +246,16 @@ class BananaHTML {
 	 *
 	 * @return bool|string
 	 */
-	protected static function wrap ($in = '', $data = [], $tag = 'div') {
-		$data  = static::array_merge(is_array($in) ? $in : ['in' => $in], is_array($data) ? $data : [], ['tag' => $tag]);
-		$in    = $add = '';
-		$tag   = 'div';
+	protected static function wrap ($in, $data, $tag) {
+		$data  = static::array_merge(is_array($in) ? $in : ['in' => $in], is_array($data) ? $data : []);
+		$in    = $attributes = '';
 		$level = 1;
 		if (isset($data['level'])) {
 			$level = $data['level'];
 			unset($data['level']);
 		}
 		static::pre_processing($data);
-		if (!static::data_prepare($data, $in, $tag, $add)) {
+		if (!static::data_prepare($data, $tag, $in, $attributes)) {
 			return false;
 		}
 		if (!(
@@ -284,25 +276,25 @@ class BananaHTML {
 		) {
 			$in = $level ? "\n".static::level("$in\n", $level) : "\n$in\n";;
 		}
-		return "<$tag$add>$in</$tag>".($level ? "\n" : '');
+		return "<$tag$attributes>$in</$tag>".($level ? "\n" : '');
 	}
 	/**
 	 * Wrapper for unpaired tags rendering
 	 *
 	 * @static
 	 *
-	 * @param array $data
+	 * @param array  $data
+	 * @param string $tag
 	 *
 	 * @return bool|string
 	 */
-	protected static function u_wrap ($data = []) {
-		$in  = $add = '';
-		$tag = 'input';
+	protected static function u_wrap ($data, $tag) {
+		$in = $attributes = '';
 		static::pre_processing($data);
-		if (!static::data_prepare($data, $in, $tag, $add)) {
+		if (!static::data_prepare($data, $tag, $in, $attributes)) {
 			return false;
 		}
-		return "<$tag$add>".($in ? " $in" : '')."\n";
+		return "<$tag$attributes>".($in ? " $in" : '')."\n";
 	}
 	/**
 	 * Rendering of form tag, default method is post, if form method is post - special session key in hidden input is added for security.
@@ -405,8 +397,7 @@ class BananaHTML {
 		$items  = static::array_flip_3d($in);
 		$result = '';
 		foreach ($items as $i => $item) {
-			$item['tag'] = 'input';
-			$result .= static::u_wrap($item);
+			$result .= static::u_wrap($item, 'input');
 		}
 		return $result;
 	}
@@ -445,8 +436,7 @@ class BananaHTML {
 			if (isset($in['max'], $in['value']) && $in['max'] !== false && $in['max'] < $in['value']) {
 				$in['value'] = $in['max'];
 			}
-			$in['tag'] = 'input';
-			return static::u_wrap($in);
+			return static::u_wrap($in, 'input');
 		}
 	}
 	/**
@@ -760,8 +750,7 @@ class BananaHTML {
 		if ($repeat === false) {
 			return false;
 		}
-		$in['tag'] = __FUNCTION__;
-		return str_repeat(static::u_wrap($in), $repeat);
+		return str_repeat("<br>\n", $repeat);
 	}
 	/**
 	 * Merging of arrays, but joining all 'class' and 'style' items, supports 2-3 arrays for input
@@ -1184,11 +1173,10 @@ class BananaHTML {
 				if (method_exists(get_called_class(), $tag)) {
 					$html .= static::$tag($d[0], $d[1]);
 				} elseif (in_array($tag, static::$unpaired_tags)) {
-					$d[1]['tag'] = $tag;
-					$d[1]['in']  = $d[0];
-					$html .= static::u_wrap($d[1]);
+					$d[1]['in'] = $d[0];
+					$html .= static::u_wrap($d[1], $tag);
 				} else {
-					$html .= static::wrap($d[0], $d[1], $tag);
+					$html .= static::wrap($d[0], $d[1], $tag ?: 'div');
 				}
 			}
 			return $html;
@@ -1196,11 +1184,10 @@ class BananaHTML {
 		if (method_exists(get_called_class(), $tag)) {
 			$in = static::$tag($in, $attrs);
 		} elseif (in_array($tag, static::$unpaired_tags)) {
-			$attrs['tag'] = $tag;
-			$attrs['in']  = $in;
-			$in           = static::u_wrap($attrs);
+			$attrs['in'] = $in;
+			$in          = static::u_wrap($attrs, $tag);
 		} else {
-			$in = static::wrap($in, $attrs, $tag);
+			$in = static::wrap($in, $attrs, $tag ?: 'div');
 		}
 		return $in;
 	}
