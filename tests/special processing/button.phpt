@@ -8,6 +8,6 @@ echo h::{'button[type=button]'}();
 echo h::button();
 ?>
 --EXPECT--
-<button type="submit">&nbsp;</button>
-<button type="button">&nbsp;</button>
-<button type="button">&nbsp;</button>
+<button type="submit"></button>
+<button type="button"></button>
+<button type="button"></button>

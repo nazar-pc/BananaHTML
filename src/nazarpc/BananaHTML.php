@@ -258,13 +258,12 @@ class BananaHTML {
 		if (!static::data_prepare($data, $tag, $in, $attributes)) {
 			return false;
 		}
-		if (!(
-			$in ||
-			$in === 0 ||
-			$in === '0'
-		)
+		if (
+			!$in &&
+			$in !== 0 &&
+			$in !== '0'
 		) {
-			$in = $in === false || !$level ? '' : '&nbsp;';
+			$in = '';
 		}
 		if (
 			$in &&

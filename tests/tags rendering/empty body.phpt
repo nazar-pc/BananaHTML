@@ -9,5 +9,5 @@ echo h::{'div'}('');
 echo h::{'div'}(false);
 ?>
 --EXPECT--
-<div>&nbsp;</div>
-<div>&nbsp;</div>
+<div></div>
+<div></div>
