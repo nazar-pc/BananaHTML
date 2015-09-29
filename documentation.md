@@ -539,7 +539,6 @@ Basically, `_` being replaced by `-`.
 Such attributes are not rendered as regular attributes, but they are used to make possible some functionality.
 * in
 * level
-* quote
 * insert
 
 #### in
@@ -599,9 +598,6 @@ results
 ```
 
 Please, note that if element's content doesn't contain other tags this option is ignored and no indentation will be applied.
-
-#### quote
-Allows to change quotation symbol for attributes, " by default.
 
 #### insert
 This attribute may be or two-dimensional array. It is used for substituting values into attributes template. Example, how it works:

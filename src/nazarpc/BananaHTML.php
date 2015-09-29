@@ -130,13 +130,6 @@ class BananaHTML {
 		if (isset($data['formaction'])) {
 			$data['formaction'] = str_replace(' ', '%20', $data['formaction']);
 		}
-		/**
-		 * If quotes symbol specified - use it
-		 */
-		if (isset($data['quote'])) {
-			$q = $data['quote'];
-			unset($data['quote']);
-		}
 		if (isset($data['class']) && empty($data['class'])) {
 			unset($data['class']);
 		}
