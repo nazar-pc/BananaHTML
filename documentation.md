@@ -1,4 +1,4 @@
-### [Methods](#methods) [Tags rendering](#tags-rendering) [Special processing](#special-processing) [Pseudo-attributes](#pseudo-attributes) [Constants](#constants)
+### [Methods](#methods) [Tags rendering](#tags-rendering) [Special processing](#special-processing) [Pseudo-attributes](#pseudo-attributes)
 
 For shorter syntax in all examples alias `h` is used:
 
@@ -663,21 +663,3 @@ results
 <input id="third_checkbox" checked type="checkbox" value="1">
 ```
 As you can see, data inside template are accessible like through `$i` variable.
-
-<a name="constants" />
-###[Up](#wrapper) Constants
-
-h class doesn't defines global constants by itself, but uses some optional constants that impacts on its behavior. As for now there is only one constant, that is used there:
-* XHTML_TAGS_STYLE
-
-#### XHTML_TAGS_STYLE
-If this constant defined as *true* (default *false*) - resulting HTML will satisfy XHTML standards:
-```php
-<?php
-h::{'input[required]'}()
-```
-results
-```html
-<input type="text" required="required" />
-```
-If not defined - `false` assumed
