@@ -430,9 +430,12 @@ class BananaHTML {
 	 * @param array        $data
 	 * @param string       $function
 	 *
-	 * @return bool|string
+	 * @return false|string
 	 */
-	protected static function template_1 ($in = '', $data = [], $function) {
+	protected static function select_common ($in = '', $data = [], $function) {
+		if (isset($in['insert']) || isset($data['insert'])) {
+			return static::__callStatic(__FUNCTION__, [$in, $data]);
+		}
 		if ($in === false) {
 			return '';
 		}
@@ -533,10 +536,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function select ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_1($in, $data, __FUNCTION__);
+		return static::select_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Rendering of optgroup tag with autosubstitution of selected attribute when value of option is equal to $data['selected'], $data['selected'] may be
@@ -550,10 +550,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function optgroup ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_1($in, $data, __FUNCTION__);
+		return static::select_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Rendering of datalist tag with autosubstitution of selected attribute when value of option is equal to $data['selected'], $data['selected'] may be
@@ -567,10 +564,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function datalist ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_1($in, $data, __FUNCTION__);
+		return static::select_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Template 2
