@@ -470,7 +470,8 @@ results
 ```
 As we need indexed array to render several tags - we take all into additional square braces.
 
-##### Usually checkboxes are accompanied with some short name (or description), so we can add it too:
+##### Usually checkboxes are accompanied with some short name (or description), so we can add
+ it too:
 ```php
 <?php
 h::{'input[name=agree][type=checkbox][value=1][checked=1]'}([
@@ -536,14 +537,10 @@ Basically, `_` being replaced by `-`.
 ###[Up](#wrapper) Pseudo-attributes
 
 Such attributes are not rendered as regular attributes, but they are used to make possible some functionality.
-* add
 * in
 * level
 * quote
 * insert
-
-#### add
-Allows to add custom string to the end of attributes list before closing &gt;
 
 #### in
 Widely used pseudo attribute, it was already used in examples before. It contains content, which is placed between two pairs of tag. For example:

@@ -82,7 +82,7 @@ class BananaHTML {
 	 *
 	 * @return bool
 	 */
-	protected static function data_prepare (&$data, &$in, &$tag, &$add) {
+	protected static function data_prepare ($data, &$in, &$tag, &$add) {
 		$q = '"';
 		if (isset($data['in'])) {
 			if ($data['in'] === false) {
@@ -130,10 +130,6 @@ class BananaHTML {
 		if (isset($data['formaction'])) {
 			$data['formaction'] = str_replace(' ', '%20', $data['formaction']);
 		}
-		if (isset($data['add'])) {
-			$add = ' '.trim($data['add']);
-			unset($data['add']);
-		}
 		/**
 		 * If quotes symbol specified - use it
 		 */
@@ -168,7 +164,6 @@ class BananaHTML {
 				continue;
 			}
 			if (is_int($key)) {
-				unset($data[$key]);
 				$add .= " $value";
 			} elseif ($value === true) {
 				$add .= " $key";
@@ -371,8 +366,8 @@ class BananaHTML {
 		return static::input_other($in);
 	}
 	/**
-	 * @param $in
-	 * @param $data
+	 * @param array $in
+	 * @param array $data
 	 *
 	 * @return array
 	 */
@@ -389,44 +384,24 @@ class BananaHTML {
 	 */
 	protected static function input_radio ($in) {
 		if (isset($in['value'])) {
-			$in['value'] = (array)$in['value'];
-		}
-		if (isset($in['in'])) {
-			$in['in'] = (array)$in['in'];
-		}
-		if (!isset($in['checked'])) {
-			$in['checked'] = $in['value'][0];
-		}
-		if (isset($in['add']) && !is_array($in['add'])) {
-			$add       = $in['add'];
-			$in['add'] = [];
-			if (isset($in['in'])) {
-				foreach ($in['in'] as $v) {
-					$in['add'][] = $add;
-				}
-			}
-			unset($add);
-		}
-		if (isset($in['value'])) {
+			$in['value']   = (array)$in['value'];
+			$checked       = isset($in['checked']) ? $in['checked'] : $in['value'][0];
+			$in['checked'] = [];
 			foreach ($in['value'] as $i => $v) {
-				if ($v == $in['checked']) {
-					@$in['add'][$i] .= ' checked';
-					break;
-				}
+				$in['checked'][$i] = $v == $checked;
 			}
+			unset($checked, $i, $v);
 		}
-		unset($in['checked'], $i, $v);
-		$items = static::array_flip_3d($in);
-		unset($v, $i);
-		$temp = '';
-		foreach ($items as $item) {
+		$items  = static::array_flip_3d($in);
+		$result = '';
+		foreach ($items as $i => $item) {
 			$item['tag'] = 'input';
 			if (isset($item['value'])) {
 				$item['value'] = static::prepare_attr_value($item['value']);
 			}
-			$temp .= static::u_wrap($item);
+			$result .= static::u_wrap($item);
 		}
-		return $temp;
+		return $result;
 	}
 	/**
 	 * @param array $in
@@ -546,22 +521,10 @@ class BananaHTML {
 				$data['disabled'] = [];
 			}
 			foreach ($in['value'] as $i => $v) {
-				if (in_array($v, $data['selected'])) {
-					if (!isset($in['add'][$i])) {
-						$in['add'][$i] = ' selected';
-					} else {
-						$in['add'][$i] .= ' selected';
-					}
-				}
-				if (in_array($v, $data['disabled'])) {
-					if (!isset($in['add'][$i])) {
-						$in['add'][$i] = ' disabled';
-					} else {
-						$in['add'][$i] .= ' disabled';
-					}
-				}
+				$in['selected'][$i] = in_array($v, $data['selected']);
+				$in['disabled'][$i] = in_array($v, $data['disabled']);
 			}
-			unset($data['disabled'], $data['selected'], $i, $v);
+			unset($data['selected'], $data['disabled'], $i, $v);
 		}
 		$options = static::array_flip_3d($in);
 		foreach ($options as &$option) {
