@@ -130,15 +130,6 @@ class BananaHTML {
 		if (isset($data['formaction'])) {
 			$data['formaction'] = str_replace(' ', '%20', $data['formaction']);
 		}
-		if (isset($data['class']) && empty($data['class'])) {
-			unset($data['class']);
-		}
-		if (isset($data['style']) && empty($data['style'])) {
-			unset($data['style']);
-		}
-		if (isset($data['value'])) {
-			$data['value'] = static::prepare_attr_value($data['value']);
-		}
 		uksort(
 			$data,
 			function ($key_1, $key_2) use ($data) {
@@ -161,6 +152,7 @@ class BananaHTML {
 			} elseif ($value === true) {
 				$add .= " $key";
 			} else {
+				$value = static::prepare_attr_value($value);
 				$add .= " $key=$q$value$q";
 			}
 		}
@@ -216,6 +208,31 @@ class BananaHTML {
 	 */
 	protected static function absolute_url ($url) {
 		return "/$url";
+	}
+	/**
+	 * Prepare text to be used as value for html attribute value
+	 *
+	 * @param string|string[] $text
+	 *
+	 * @return string|string[]
+	 */
+	static function prepare_attr_value ($text) {
+		if (is_array($text)) {
+			foreach ($text as &$t) {
+				$t = static::prepare_attr_value($t);
+			}
+			return $text;
+		}
+		return strtr(
+			$text,
+			[
+				'&'  => '&amp;',
+				'"'  => '&quot;',
+				'\'' => '&apos;',
+				'<'  => '&lt;',
+				'>'  => '&gt;'
+			]
+		);
 	}
 	/**
 	 * Empty stub, may be redefined if needed for custom attributes processing
@@ -389,9 +406,6 @@ class BananaHTML {
 		$result = '';
 		foreach ($items as $i => $item) {
 			$item['tag'] = 'input';
-			if (isset($item['value'])) {
-				$item['value'] = static::prepare_attr_value($item['value']);
-			}
 			$result .= static::u_wrap($item);
 		}
 		return $result;
@@ -1221,32 +1235,6 @@ class BananaHTML {
 			return false;
 		}
 		return !static::is_array_assoc($array);
-	}
-	/**
-	 * Prepare text to be used as value for html attribute value
-	 *
-	 * @param string|string[] $text
-	 *
-	 * @return string|string[]
-	 */
-	static function prepare_attr_value ($text) {
-		if (is_array($text)) {
-			foreach ($text as &$val) {
-				$val = static::prepare_attr_value($val);
-			}
-			unset($val);
-			return $text;
-		}
-		return strtr(
-			$text,
-			[
-				'&'  => '&amp;',
-				'"'  => '&quot;',
-				'\'' => '&apos;',
-				'<'  => '&lt;',
-				'>'  => '&gt;'
-			]
-		);
 	}
 	/**
 	 * Works like <b>array_flip()</b> function, but is used when every item of array is not a string, but may be also array
