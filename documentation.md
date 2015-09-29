@@ -571,35 +571,37 @@ Also, as you can see, you can specify class or any other attribute in the first 
 Special indentation attribute, in most cases it is not specified directly (and assumed equal to 1). The best way to show difference - examples:
 ```php
 <?php
-h::p('Content')
+h::{'p span'}('Content')
 ```
 results
 ```html
 <p>
-	Content
+	<span>Content</span>
 </p>
 ```
 But:
 ```php
 <?php
-h::{'p[level=0]'}('Content')
+h::{'p[level=0] span'}('Content')
 ```
 results
 ```html
-<p>Content</p>
+<p><span>Content</span></p>
 ```
 And:
 ```php
 <?php
-h::{'p[level=3]'}('Content')
+h::{'p[level=3] span'}('Content')
 ```
 
 results
 ```html
 <p>
-			Content
+			<span>Content</span>
 </p>
 ```
+
+Please, note that if element's content doesn't contain other tags this option is ignored and no indentation will be applied.
 
 #### quote
 Allows to change quotation symbol for attributes, " by default.
