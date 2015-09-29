@@ -366,21 +366,31 @@ class BananaHTML {
 			return static::__callStatic(__FUNCTION__, [$in, $data]);
 		}
 		if (isset($in['type']) && $in['type'] == 'radio') {
+			if (isset($in['value'])) {
+				$in['value'] = (array)$in['value'];
+			}
+			if (isset($in['in'])) {
+				$in['in'] = (array)$in['in'];
+			}
 			if (!isset($in['checked'])) {
 				$in['checked'] = $in['value'][0];
 			}
 			if (isset($in['add']) && !is_array($in['add'])) {
 				$add = $in['add'];
 				$in['add'] = [];
-				foreach ($in['in'] as $v) {
-					$in['add'][] = $add;
+				if (isset($in['in'])) {
+					foreach ($in['in'] as $v) {
+						$in['add'][] = $add;
+					}
 				}
 				unset($add);
 			}
-			foreach ($in['value'] as $i => $v) {
-				if ($v == $in['checked']) {
-					@$in['add'][$i] .= ' checked';
-					break;
+			if (isset($in['value'])) {
+				foreach ($in['value'] as $i => $v) {
+					if ($v == $in['checked']) {
+						@$in['add'][$i] .= ' checked';
+						break;
+					}
 				}
 			}
 			unset($in['checked'], $i, $v);
