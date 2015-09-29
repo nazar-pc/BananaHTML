@@ -3,7 +3,7 @@ Attribute with no value: input#id[required]
 --FILE--
 <?php
 include __DIR__.'/../bootstrap.php';
-echo h::{'input#id[required]'}();
+echo h::{'input[required]'}();
 ?>
 --EXPECT--
-<input id="id" required type="text">
+<input required type="text">

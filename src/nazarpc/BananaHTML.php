@@ -7,35 +7,41 @@
  */
 namespace nazarpc;
 /**
- * If constant "XHTML_TAGS_STYLE" is true - tags will be generated according to rules of xhtml
- */
-defined('XHTML_TAGS_STYLE') || define('XHTML_TAGS_STYLE', false);
-/**
  * BananaHTML - single class that makes HTML generating easier
  *
  * This is class for HTML code rendering in accordance with the standards of HTML5, and with useful syntax extensions for simpler usage
  */
 class BananaHTML {
-	protected static $known_unit_attributes = [    //Unit attributes, that have no value, or have the same value as name in xhtml style
-												   'async',
-												   'defer',
-												   'formnovalidate',
-												   'autofocus',
-												   'checked',
-												   'selected',
-												   'readonly',
-												   'required',
-												   'disabled',
-												   'multiple',
-												   'pubdate',
-												   'noshade',
-												   'autoplay',
-												   'controls',
-												   'loop',
-												   'itemscope',
-												   'no-label'
-	],
-		$unpaired_tags = [
+	/**
+	 * Unit attributes, that have no value
+	 *
+	 * @var string[]
+	 */
+	protected static $known_unit_attributes = [
+		'async',
+		'defer',
+		'formnovalidate',
+		'autofocus',
+		'checked',
+		'selected',
+		'readonly',
+		'required',
+		'disabled',
+		'multiple',
+		'pubdate',
+		'noshade',
+		'autoplay',
+		'controls',
+		'loop',
+		'itemscope',
+		'no-label'
+	];
+	/**
+	 * Attributes that doesn't have closing tag
+	 *
+	 * @var string[]
+	 */
+	protected static $unpaired_tags = [
 		'area',
 		'base',
 		'br',
@@ -163,9 +169,9 @@ class BananaHTML {
 			}
 			if (is_int($key)) {
 				unset($data[$key]);
-				$add .= " $value".(XHTML_TAGS_STYLE ? "=$q$value$q" : '');
+				$add .= " $value";
 			} elseif ($value === true) {
-				$add .= " $key".(XHTML_TAGS_STYLE ? "=$q$key$q" : '');
+				$add .= " $key";
 			} else {
 				$add .= " $key=$q$value$q";
 			}
@@ -291,7 +297,6 @@ class BananaHTML {
 		if (!static::data_prepare($data, $in, $tag, $add)) {
 			return false;
 		}
-		$add .= XHTML_TAGS_STYLE ? ' /' : '';
 		return "<$tag$add>".($in ? " $in" : '')."\n";
 	}
 	/**
