@@ -456,7 +456,6 @@ class BananaHTML {
 		) {
 			$in['in'] = &$in['value'];
 		} elseif (
-			is_array($in) &&
 			(
 				!isset($in['in']) || !is_array($in['in'])
 			) &&
@@ -464,14 +463,10 @@ class BananaHTML {
 				!isset($in['value']) || !is_array($in['value'])
 			)
 		) {
-			$temp        = $in;
-			$in          = [];
-			$in['value'] = &$temp;
-			$in['in']    = &$temp;
-			unset($temp);
-		}
-		if (!isset($in['value']) && !isset($in['in'])) {
-			return false;
+			$in = [
+				'in'    => $in,
+				'value' => $in
+			];
 		}
 		/**
 		 * Moves arrays of attributes into option tags
