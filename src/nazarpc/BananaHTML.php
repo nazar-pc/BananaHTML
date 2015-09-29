@@ -90,38 +90,18 @@ class BananaHTML {
 			$in = trim($data['in']);
 			unset($data['in']);
 		}
-		if (in_array(false, $data, true)) {
-			foreach ($data as $i => $item) {
-				if ($item === false) {
-					unset($data[$i]);
-				}
-			}
-			unset($i, $item);
-		}
 		if ($tag == 'img' && !isset($data['alt'])) {
 			$data['alt'] = '';
 		}
 		if (isset($data['src'])) {
-			$data['src'] = str_replace(' ', '%20', $data['src']);
 			$data['src'] = static::prepare_url($data['src']);
 		}
 		if (isset($data['href'])) {
-			$data['href'] = str_replace(
-				[' ', '"'],
-				['%20', '&quot;'],
-				$data['href']
-			);
 			if ($tag != 'a') {
 				$data['href'] = static::prepare_url($data['href']);
 			} elseif (substr($data['href'], 0, 1) == '#') {
 				$data['href'] = static::url_with_hash($data['href']);
 			}
-		}
-		if (isset($data['action'])) {
-			$data['action'] = str_replace(' ', '%20', $data['action']);
-		}
-		if (isset($data['formaction'])) {
-			$data['formaction'] = str_replace(' ', '%20', $data['formaction']);
 		}
 		uksort(
 			$data,
@@ -159,9 +139,12 @@ class BananaHTML {
 	 * @param string $url
 	 * @param bool   $absolute Returns absolute url or relative
 	 *
-	 * @return string
+	 * @return false|string
 	 */
 	static function prepare_url ($url, $absolute = false) {
+		if ($url === false) {
+			return false;
+		}
 		if (substr($url, 0, 1) == '#') {
 			$url = static::url_with_hash($url);
 		} elseif (
@@ -244,7 +227,7 @@ class BananaHTML {
 	 * @param array        $data
 	 * @param string       $tag
 	 *
-	 * @return bool|string
+	 * @return false|string
 	 */
 	protected static function wrap ($in, $data, $tag) {
 		$data  = static::array_merge(is_array($in) ? $in : ['in' => $in], is_array($data) ? $data : []);
@@ -285,7 +268,7 @@ class BananaHTML {
 	 * @param array  $data
 	 * @param string $tag
 	 *
-	 * @return bool|string
+	 * @return false|string
 	 */
 	protected static function u_wrap ($data, $tag) {
 		$in = $attributes = '';
