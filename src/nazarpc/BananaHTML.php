@@ -941,32 +941,25 @@ class BananaHTML {
 				}
 				return $output;
 			}
-		} else {
-			$data[0] = $data;
 		}
-		if (!isset($data[0])) {
-			$data[0] = '';
-		}
-		/**
-		 * Second part of expression - fix for "select" and "datalist" tags because they accept array as values
-		 */
-		if (
-			!is_array($data[0]) ||
-			(
+		if (isset($data[0])) {
+			/**
+			 * Second part of expression - fix for "select" and "datalist" tags because they accept array as values
+			 */
+			if (
+				!is_array($data[0]) ||
 				(
-					strpos($input, 'select') === 0 ||
-					strpos($input, 'optgroup') === 0 ||
-					strpos($input, 'datalist') === 0
-				) &&
-				!isset($data[0]['in'])
-			)
-		) {
-			$data[0] = ['in' => $data[0]];
-		}
-		if (isset($data[1])) {
-			$data = static::array_merge($data[0], $data[1]);
-		} else {
-			$data = $data[0];
+					(
+						strpos($input, 'select') === 0 ||
+						strpos($input, 'optgroup') === 0 ||
+						strpos($input, 'datalist') === 0
+					) &&
+					!isset($data[0]['in'])
+				)
+			) {
+				$data[0] = ['in' => $data[0]];
+			}
+			$data = isset($data[1]) ? static::array_merge($data[0], $data[1]) : $data[0];
 		}
 		$attrs = [];
 		/**
