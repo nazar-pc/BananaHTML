@@ -758,34 +758,6 @@ class BananaHTML {
 		return $array3 + $array2 + $array1;
 	}
 	/**
-	 * Analyze CSS selector for nester tags
-	 *
-	 * @param array|string $in
-	 * @param int          $offset
-	 *
-	 * @return bool            Returns <i>true</i> and changes <i>&$in</i> to array if nested tags detected
-	 */
-	protected static function analyze_selector (&$in, $offset = 0) {
-		$space_position = strpos($in, ' ', $offset);
-		if ($space_position === false) {
-			return false;
-		}
-		$next_space = strpos($in, ' ', $space_position + 1);
-		$attr_close = strpos($in, ']', $space_position);
-		if (
-			$next_space === false ||
-			$attr_close === false ||
-			$next_space > $attr_close
-		) {
-			$in = [
-				substr($in, 0, $space_position),
-				substr($in, $space_position + 1)
-			];
-			return true;
-		}
-		return static::analyze_selector($in, $space_position + 1);
-	}
-	/**
 	 * @param array[]|string|string[] $data
 	 * @param string[]                $insert
 	 */
@@ -840,80 +812,12 @@ class BananaHTML {
 		} elseif (isset($data[1]) && $data[1] === false && !isset($data[2])) {
 			unset($data[1]);
 		}
-		$input = trim($input);
+		$input = static::parse_nesting_selector(trim($input));
 		/**
 		 * Analysis of called tag. If nested tags presented
 		 */
-		if (static::analyze_selector($input)) {
-			/**
-			 * If tag name ends with pipe "|" symbol - for every element of array separate copy of current tag will be created
-			 */
-			if (strpos($input[0], '|') !== false) {
-				$input[0] = substr($input[0], 0, -1);
-				$output   = [];
-				/**
-				 * When parameters are not taken in braces - make this operation, if it is necessary
-				 */
-				if (
-					count($data) > 2 ||
-					(
-						isset($data[1]) &&
-						static::is_array_indexed($data[1])
-					)
-				) {
-					$data = [$data];
-				}
-				foreach ($data[0] as $d) {
-					if (isset($d[0]) && static::is_array_indexed($d[0]) && !in_array($d[0][0], static::$known_unit_attributes)) {
-						if (
-							isset($d[1]) &&
-							(
-								!is_array($d[1]) ||
-								(
-									static::is_array_indexed($d[1]) && !in_array($d[1][0], static::$known_unit_attributes)
-								)
-							)
-						) {
-							$output_ = [];
-							foreach ($d as $d_) {
-								$output_[] = static::__callStatic($input[1], $d_);
-							}
-							$output[] = $output_;
-							unset($output_);
-						} else {
-							$output[] = [
-								static::__callStatic($input[1], $d[0]),
-								isset($d[1]) ? $d[1] : false
-							];
-						}
-					} else {
-						$output[] = static::__callStatic($input[1], $d);
-					}
-				}
-				unset($d);
-			} elseif (!isset($data[1]) || static::is_array_assoc($data[1])) {
-				$output  = static::__callStatic(
-					$input[1],
-					[
-						isset($data[0]) ? $data[0] : '',
-						isset($data[1]) ? $data[1] : false
-					]
-				);
-				$data[1] = [];
-			} else {
-				$output  = static::__callStatic(
-					$input[1],
-					$data
-				);
-				$data[1] = [];
-			}
-			return static::__callStatic(
-				$input[0],
-				[
-					$output,
-					isset($data[1]) ? $data[1] : false
-				]
-			);
+		if (is_array($input)) {
+			return static::handle_nested_selectors($input, $data);
 		}
 		if (substr($input, -1) == '|') {
 			$input = substr($input, 0, -1);
@@ -1164,6 +1068,110 @@ class BananaHTML {
 			$in = static::wrap($in, $attrs, $tag ?: 'div');
 		}
 		return $in;
+	}
+	/**
+	 * Analyze CSS selector for nester tags
+	 *
+	 * @param array|string $in
+	 * @param int          $offset
+	 *
+	 * @return string Returns array of strings if nesting selector detected, unchanged input string otherwise
+	 */
+	protected static function parse_nesting_selector ($in, $offset = 0) {
+		$space_position = strpos($in, ' ', $offset);
+		if ($space_position === false) {
+			return $in;
+		}
+		$next_space = strpos($in, ' ', $space_position + 1);
+		$attr_close = strpos($in, ']', $space_position);
+		if (
+			$next_space === false ||
+			$attr_close === false ||
+			$next_space > $attr_close
+		) {
+			return [
+				substr($in, 0, $space_position),
+				substr($in, $space_position + 1)
+			];
+		}
+		return static::parse_nesting_selector($in, $space_position + 1);
+	}
+	/**
+	 * @param string[] $input
+	 * @param array    $data
+	 *
+	 * @return string
+	 */
+	protected static function handle_nested_selectors ($input, $data) {
+		/**
+		 * If tag name ends with pipe "|" symbol - for every element of array separate copy of current tag will be created
+		 */
+		if (strpos($input[0], '|') !== false) {
+			$input[0] = substr($input[0], 0, -1);
+			$output   = [];
+			/**
+			 * When parameters are not taken in braces - make this operation, if it is necessary
+			 */
+			if (
+				count($data) > 2 ||
+				(
+					isset($data[1]) &&
+					static::is_array_indexed($data[1])
+				)
+			) {
+				$data = [$data];
+			}
+			foreach ($data[0] as $d) {
+				if (isset($d[0]) && static::is_array_indexed($d[0]) && !in_array($d[0][0], static::$known_unit_attributes)) {
+					if (
+						isset($d[1]) &&
+						(
+							!is_array($d[1]) ||
+							(
+								static::is_array_indexed($d[1]) && !in_array($d[1][0], static::$known_unit_attributes)
+							)
+						)
+					) {
+						$output_ = [];
+						foreach ($d as $d_) {
+							$output_[] = static::__callStatic($input[1], $d_);
+						}
+						$output[] = $output_;
+						unset($output_);
+					} else {
+						$output[] = [
+							static::__callStatic($input[1], $d[0]),
+							isset($d[1]) ? $d[1] : false
+						];
+					}
+				} else {
+					$output[] = static::__callStatic($input[1], $d);
+				}
+			}
+			unset($d);
+		} elseif (!isset($data[1]) || static::is_array_assoc($data[1])) {
+			$output  = static::__callStatic(
+				$input[1],
+				[
+					isset($data[0]) ? $data[0] : '',
+					isset($data[1]) ? $data[1] : false
+				]
+			);
+			$data[1] = [];
+		} else {
+			$output  = static::__callStatic(
+				$input[1],
+				$data
+			);
+			$data[1] = [];
+		}
+		return static::__callStatic(
+			$input[0],
+			[
+				$output,
+				isset($data[1]) ? $data[1] : false
+			]
+		);
 	}
 	/**
 	 * Checks associativity of array
