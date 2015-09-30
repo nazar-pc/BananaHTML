@@ -432,7 +432,7 @@ class BananaHTML {
 	 *
 	 * @return false|string
 	 */
-	protected static function select_common ($in = '', $data = [], $function) {
+	protected static function select_common ($in, $data, $function) {
 		if (isset($in['insert']) || isset($data['insert'])) {
 			return static::__callStatic(__FUNCTION__, [$in, $data]);
 		}
@@ -447,27 +447,7 @@ class BananaHTML {
 		) {
 			return static::wrap($in, $data, $function);
 		}
-		if (
-			!isset($in['value']) && isset($in['in']) && is_array($in['in'])
-		) {
-			$in['value'] = &$in['in'];
-		} elseif (
-			!isset($in['in']) && isset($in['value']) && is_array($in['value'])
-		) {
-			$in['in'] = &$in['value'];
-		} elseif (
-			(
-				!isset($in['in']) || !is_array($in['in'])
-			) &&
-			(
-				!isset($in['value']) || !is_array($in['value'])
-			)
-		) {
-			$in = [
-				'in'    => $in,
-				'value' => $in
-			];
-		}
+		$in = static::select_common_normalize($in);
 		/**
 		 * Moves arrays of attributes into option tags
 		 */
@@ -478,31 +458,21 @@ class BananaHTML {
 			}
 		}
 		unset($value);
-		if (is_array($in['value'])) {
-			if (isset($in['disabled'])) {
-				$data['disabled'] = array_merge((array)$in['disabled'], isset($data['disabled']) ? $data['disabled'] : []);
-				unset($in['disabled']);
-			}
-			if (isset($in['selected'])) {
-				$data['selected'] = array_merge((array)$in['selected'], isset($data['selected']) ? $data['selected'] : []);
-				unset($in['selected']);
-			}
-			if (!isset($data['selected'])) {
-				$data['selected'] = $in['value'][0];
-			}
-			$data['selected'] = (array)$data['selected'];
-			if (isset($data['disabled'])) {
-				$data['disabled'] = (array)$data['disabled'];
-				$data['selected'] = array_diff($data['selected'], $data['disabled']);
-			} else {
-				$data['disabled'] = [];
-			}
-			foreach ($in['value'] as $i => $v) {
-				$in['selected'][$i] = in_array($v, $data['selected']);
-				$in['disabled'][$i] = in_array($v, $data['disabled']);
-			}
-			unset($data['selected'], $data['disabled'], $i, $v);
+		$disabled = array_merge(
+			isset($in['disabled']) ? (array)$in['disabled'] : [],
+			isset($data['disabled']) ? (array)$data['disabled'] : []
+		);
+		$selected = array_merge(
+			isset($in['selected']) ? (array)$in['selected'] : [],
+			isset($data['selected']) ? (array)$data['selected'] : []
+		) ?: [$in['value'][0]];
+		unset($data['selected'], $data['disabled']);
+		$in['selected'] = $in['disabled'] = [];
+		foreach ($in['value'] as $i => $v) {
+			$in['disabled'][$i] = in_array($v, $disabled);
+			$in['selected'][$i] = !$in['disabled'][$i] && in_array($v, $selected);
 		}
+		unset($i, $v);
 		$options = static::array_flip_3d($in);
 		foreach ($options as &$option) {
 			if (isset($option[1])) {
@@ -518,6 +488,39 @@ class BananaHTML {
 		}
 		unset($option);
 		return static::wrap(implode('', $options), $data, $function);
+	}
+	/**
+	 * Ensures that both `in` and `value` elements are present in array
+	 *
+	 * @param array $in
+	 *
+	 * @return array
+	 */
+	protected static function select_common_normalize ($in) {
+		$has_in    = isset($in['in']);
+		$has_value = isset($in['value']);
+		if (
+			!$has_value && $has_in && is_array($in['in'])
+		) {
+			$in['value'] = &$in['in'];
+		} elseif (
+			!$has_in && $has_value && is_array($in['value'])
+		) {
+			$in['in'] = &$in['value'];
+		} elseif (
+			(
+				!$has_in || !is_array($in['in'])
+			) &&
+			(
+				!$has_value || !is_array($in['value'])
+			)
+		) {
+			$in = [
+				'in'    => $in,
+				'value' => $in
+			];
+		}
+		return $in;
 	}
 	/**
 	 * Rendering of select tag with autosubstitution of selected attribute when value of option is equal to $data['selected'], $data['selected'] may be
