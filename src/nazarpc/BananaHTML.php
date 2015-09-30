@@ -574,7 +574,10 @@ class BananaHTML {
 	 *
 	 * @return bool|string
 	 */
-	protected static function template_2 ($in = '', $data = [], $function) {
+	protected static function textarea_common ($in = '', $data = [], $function) {
+		if (isset($in['insert']) || isset($data['insert'])) {
+			return static::__callStatic($function, func_get_args());
+		}
 		if ($in === false) {
 			return false;
 		}
@@ -614,10 +617,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function textarea ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_2($in, $data, __FUNCTION__);
+		return static::textarea_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Rendering of pre tag with supporting multiple input data in the form of array of strings
@@ -630,10 +630,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function pre ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_2($in, $data, __FUNCTION__);
+		return static::textarea_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Rendering of code tag with supporting multiple input data in the form of array of strings
@@ -646,10 +643,7 @@ class BananaHTML {
 	 * @return bool|string
 	 */
 	static function code ($in = '', $data = []) {
-		if (isset($in['insert']) || isset($data['insert'])) {
-			return static::__callStatic(__FUNCTION__, func_get_args());
-		}
-		return static::template_2($in, $data, __FUNCTION__);
+		return static::textarea_common($in, $data, __FUNCTION__);
 	}
 	/**
 	 * Rendering of button tag, if button type is not specified - it will be button type
@@ -807,9 +801,8 @@ class BananaHTML {
 		if ($data === false || $data === [false]) {
 			return false;
 		}
-		if (is_scalar($data)) {
-			$data = [$data];
-		} elseif (isset($data[1]) && $data[1] === false && !isset($data[2])) {
+		$data = (array)$data;
+		if (isset($data[1]) && $data[1] === false && !isset($data[2])) {
 			unset($data[1]);
 		}
 		$input = static::parse_nesting_selector(trim($input));
