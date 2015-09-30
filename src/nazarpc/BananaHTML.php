@@ -961,48 +961,7 @@ class BananaHTML {
 			}
 			$data = isset($data[1]) ? static::array_merge($data[0], $data[1]) : $data[0];
 		}
-		$attrs = [];
-		/**
-		 * Attributes processing
-		 */
-		if (($pos = mb_strpos($input, '[')) !== false) {
-			$attrs_ = explode('][', mb_substr($input, $pos + 1, -1));
-			$input  = mb_substr($input, 0, $pos);
-			foreach ($attrs_ as &$attr) {
-				$attr = explode('=', $attr, 2);
-				if (isset($attr[1])) {
-					$attrs[$attr[0]] = $attr[1];
-				} else {
-					$attrs[] = $attr[0];
-				}
-			}
-			unset($attrs_, $attr);
-		}
-		/**
-		 * Classes processing
-		 */
-		if (($pos = mb_strpos($input, '.')) !== false) {
-			if (!isset($attrs['class'])) {
-				$attrs['class'] = '';
-			}
-			$attrs['class'] = trim($attrs['class'].' '.str_replace('.', ' ', mb_substr($input, $pos)));
-			$input          = mb_substr($input, 0, $pos);
-		}
-		unset($pos);
-		/**
-		 * Id and tag determination
-		 */
-		$input = explode('#', $input);
-		$tag   = $input[0];
-		/**
-		 * Convenient support of custom tags for Web Components
-		 *
-		 * Allows to write BananaHTML::custom_tag() that will be translated to <custom-tag></custom-tag>
-		 */
-		$tag = strtr($tag, '_', '-');
-		if (isset($input[1])) {
-			$attrs['id'] = $input[1];
-		}
+		list($tag, $attrs) = static::parse_tag_string($input);
 		$attrs = static::array_merge($attrs, $data);
 		if (
 			$tag == 'select' ||
@@ -1158,6 +1117,58 @@ class BananaHTML {
 				isset($data[1]) ? $data[1] : false
 			]
 		);
+	}
+	/**
+	 * Tag string might be complex and include id, class (classes) and attributes
+	 *
+	 * This method takes such string as input and returns pure tag name and array of attributes
+	 *
+	 * @param string $input
+	 *
+	 * @return array [$tag, $attributes]
+	 */
+	protected static function parse_tag_string ($input) {
+		$attributes = [];
+		/**
+		 * Attributes processing
+		 */
+		$pos = mb_strpos($input, '[');
+		if ($pos !== false) {
+			$regular_attributes = explode('][', mb_substr($input, $pos + 1, -1));
+			$input              = mb_substr($input, 0, $pos);
+			foreach ($regular_attributes as &$attr) {
+				/**
+				 * For attribute without value we just put `true`, as this will be treated as boolean attribute
+				 */
+				$attr                 = explode('=', $attr, 2);
+				$attributes[$attr[0]] = isset($attr[1]) ? $attr[1] : true;
+			}
+			unset($regular_attributes, $attr);
+		}
+		/**
+		 * Classes processing
+		 */
+		$pos = mb_strpos($input, '.');
+		if ($pos !== false) {
+			$attributes['class'] = str_replace('.', ' ', mb_substr($input, $pos));
+			$input               = mb_substr($input, 0, $pos);
+		}
+		unset($pos);
+		/**
+		 * Id and tag determination
+		 */
+		$input = explode('#', $input);
+		$tag   = $input[0];
+		/**
+		 * Convenient support of custom tags for Web Components
+		 *
+		 * Allows to write BananaHTML::custom_tag() that will be translated to <custom-tag></custom-tag>
+		 */
+		$tag = str_replace('_', '-', $tag);
+		if (isset($input[1])) {
+			$attributes['id'] = $input[1];
+		}
+		return [$tag, $attributes];
 	}
 	/**
 	 * Checks associativity of array
