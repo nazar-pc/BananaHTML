@@ -1150,7 +1150,7 @@ class BananaHTML {
 		 */
 		$pos = mb_strpos($input, '.');
 		if ($pos !== false) {
-			$attributes['class'] = str_replace('.', ' ', mb_substr($input, $pos));
+			$attributes['class'] = trim(str_replace('.', ' ', mb_substr($input, $pos)));
 			$input               = mb_substr($input, 0, $pos);
 		}
 		unset($pos);
