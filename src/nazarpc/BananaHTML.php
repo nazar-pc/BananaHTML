@@ -931,13 +931,7 @@ class BananaHTML {
 		if (isset($attributes['insert'])) {
 			return static::process_inserts($tag, $in, $attributes);
 		}
-		if (method_exists(get_called_class(), $tag)) {
-			return static::$tag($in, $attributes);
-		} elseif (in_array($tag, static::$unpaired_tags)) {
-			$attributes['in'] = $in;
-			return static::u_wrap($attributes, $tag);
-		}
-		return static::wrap($in, $attributes, $tag ?: 'div');
+		return static::render_tag($tag, $in, $attributes);
 	}
 	/**
 	 * Analyze CSS selector for nester tags
@@ -1133,14 +1127,7 @@ class BananaHTML {
 		unset($attributes['insert']);
 		$html = '';
 		foreach (static::inserts_processing([$in, $attributes], $insert) as $d) {
-			if (method_exists(get_called_class(), $tag)) {
-				$html .= static::$tag($d[0], $d[1]);
-			} elseif (in_array($tag, static::$unpaired_tags)) {
-				$d[1]['in'] = $d[0];
-				$html .= static::u_wrap($d[1], $tag);
-			} else {
-				$html .= static::wrap($d[0], $d[1], $tag ?: 'div');
-			}
+			$html .= static::render_tag($tag, $d[0], $d[1]);
 		}
 		return $html;
 	}
@@ -1177,6 +1164,22 @@ class BananaHTML {
 			$data = str_replace("\$i[$i]", $d, $data);
 		}
 		return $data;
+	}
+	/**
+	 * @param string       $tag
+	 * @param array|string $in
+	 * @param array        $attributes
+	 *
+	 * @return false|string
+	 */
+	protected static function render_tag ($tag, $in, $attributes) {
+		if (method_exists(get_called_class(), $tag)) {
+			return static::$tag($in, $attributes);
+		} elseif (in_array($tag, static::$unpaired_tags)) {
+			$attributes['in'] = $in;
+			return static::u_wrap($attributes, $tag);
+		}
+		return static::wrap($in, $attributes, $tag ?: 'div');
 	}
 	/**
 	 * Checks associativity of array
