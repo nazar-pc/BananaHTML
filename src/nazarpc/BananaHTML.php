@@ -752,40 +752,38 @@ class BananaHTML {
 		return $array3 + $array2 + $array1;
 	}
 	/**
-	 * @param array[]|string|string[] $data
-	 * @param string[]                $insert
+	 * @param string|string[] $data
+	 * @param string[]        $insert
+	 *
+	 * @return string|string[]
 	 */
-	protected static function inserts_replacing_recursive (&$data, &$insert) {
+	protected static function inserts_replacing_recursive ($data, $insert) {
 		if (is_array($data)) {
 			foreach ($data as &$d) {
-				static::inserts_replacing_recursive($d, $insert);
+				$d = static::inserts_replacing_recursive($d, $insert);
 			}
-			unset($d);
-		} else {
-			foreach ($insert as $i => $d) {
-				$data = str_replace("\$i[$i]", $d, $data);
-			}
+			return $data;
 		}
+		foreach ($insert as $i => $d) {
+			$data = str_replace("\$i[$i]", $d, $data);
+		}
+		return $data;
 	}
 	/**
 	 * @param array|array[]    $data
 	 * @param array[]|string[] $insert
+	 *
+	 * @return string[]
 	 */
-	protected static function inserts_processing (&$data, &$insert) {
-		if (!$insert) {
-			$data = '';
-			return;
-		}
+	protected static function inserts_processing ($data, $insert) {
 		if (static::is_array_indexed($insert) && is_array($insert[0])) {
 			$new_data = [];
 			foreach ($insert as $i) {
-				$new_data[] = $data;
-				static::inserts_replacing_recursive($new_data[count($new_data) - 1], $i);
+				$new_data[] = static::inserts_replacing_recursive($data, $i);
 			}
-			$data = $new_data;
-		} else {
-			static::inserts_replacing_recursive($data, $insert);
+			return $new_data;
 		}
+		return static::inserts_replacing_recursive($data, $insert);
 	}
 	/**
 	 * Processing of complicated rendering structures
@@ -983,10 +981,8 @@ class BananaHTML {
 		if (isset($attributes['insert'])) {
 			$insert = $attributes['insert'];
 			unset($attributes['insert']);
-			$data = [$in, $attributes];
-			static::inserts_processing($data, $insert);
 			$html = '';
-			foreach ($data as $d) {
+			foreach (static::inserts_processing([$in, $attributes], $insert) as $d) {
 				if (method_exists(get_called_class(), $tag)) {
 					$html .= static::$tag($d[0], $d[1]);
 				} elseif (in_array($tag, static::$unpaired_tags)) {
