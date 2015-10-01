@@ -961,35 +961,29 @@ class BananaHTML {
 			}
 			$data = isset($data[1]) ? static::array_merge($data[0], $data[1]) : $data[0];
 		}
-		list($tag, $attrs) = static::parse_tag_string($input);
-		$attrs = static::array_merge($attrs, $data);
+		list($tag, $attributes) = static::parse_tag_string($input);
+		$attributes = static::array_merge($attributes, $data);
+		$in         = '';
 		if (
 			$tag == 'select' ||
 			$tag == 'optgroup' ||
 			$tag == 'datalist'
 		) {
-			if (isset($attrs['value'])) {
-				$in = [
-					'in'    => $attrs['in'],
-					'value' => $attrs['value']
-				];
-				unset($attrs['in'], $attrs['value']);
-			} else {
-				$in = [
-					'in' => $attrs['in']
-				];
-				unset($attrs['in']);
+			$in = [
+				'in' => $attributes['in']
+			];
+			if (isset($attributes['value'])) {
+				$in['value'] = $attributes['value'];
 			}
-		} elseif (isset($attrs['in'])) {
-			$in = $attrs['in'];
-			unset($attrs['in']);
-		} else {
-			$in = '';
+			unset($attributes['in'], $attributes['value']);
+		} elseif (isset($attributes['in'])) {
+			$in = $attributes['in'];
+			unset($attributes['in']);
 		}
-		if (isset($attrs['insert'])) {
-			$insert = $attrs['insert'];
-			unset($attrs['insert']);
-			$data = [$in, $attrs];
+		if (isset($attributes['insert'])) {
+			$insert = $attributes['insert'];
+			unset($attributes['insert']);
+			$data = [$in, $attributes];
 			static::inserts_processing($data, $insert);
 			$html = '';
 			foreach ($data as $d) {
@@ -1005,12 +999,12 @@ class BananaHTML {
 			return $html;
 		}
 		if (method_exists(get_called_class(), $tag)) {
-			$in = static::$tag($in, $attrs);
+			$in = static::$tag($in, $attributes);
 		} elseif (in_array($tag, static::$unpaired_tags)) {
-			$attrs['in'] = $in;
-			$in          = static::u_wrap($attrs, $tag);
+			$attributes['in'] = $in;
+			$in               = static::u_wrap($attributes, $tag);
 		} else {
-			$in = static::wrap($in, $attrs, $tag ?: 'div');
+			$in = static::wrap($in, $attributes, $tag ?: 'div');
 		}
 		return $in;
 	}
