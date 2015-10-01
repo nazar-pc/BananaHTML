@@ -752,40 +752,6 @@ class BananaHTML {
 		return $array3 + $array2 + $array1;
 	}
 	/**
-	 * @param string|string[] $data
-	 * @param string[]        $insert
-	 *
-	 * @return string|string[]
-	 */
-	protected static function inserts_replacing_recursive ($data, $insert) {
-		if (is_array($data)) {
-			foreach ($data as &$d) {
-				$d = static::inserts_replacing_recursive($d, $insert);
-			}
-			return $data;
-		}
-		foreach ($insert as $i => $d) {
-			$data = str_replace("\$i[$i]", $d, $data);
-		}
-		return $data;
-	}
-	/**
-	 * @param array|array[]    $data
-	 * @param array[]|string[] $insert
-	 *
-	 * @return string[]
-	 */
-	protected static function inserts_processing ($data, $insert) {
-		if (static::is_array_indexed($insert) && is_array($insert[0])) {
-			$new_data = [];
-			foreach ($insert as $i) {
-				$new_data[] = static::inserts_replacing_recursive($data, $i);
-			}
-			return $new_data;
-		}
-		return static::inserts_replacing_recursive($data, $insert);
-	}
-	/**
 	 * Processing of complicated rendering structures
 	 *
 	 * @static
@@ -961,48 +927,17 @@ class BananaHTML {
 		}
 		list($tag, $attributes) = static::parse_tag_string($input);
 		$attributes = static::array_merge($attributes, $data);
-		$in         = '';
-		if (
-			$tag == 'select' ||
-			$tag == 'optgroup' ||
-			$tag == 'datalist'
-		) {
-			$in = [
-				'in' => $attributes['in']
-			];
-			if (isset($attributes['value'])) {
-				$in['value'] = $attributes['value'];
-			}
-			unset($attributes['in'], $attributes['value']);
-		} elseif (isset($attributes['in'])) {
-			$in = $attributes['in'];
-			unset($attributes['in']);
-		}
+		list($in, $attributes) = static::prepare_content($tag, $attributes);
 		if (isset($attributes['insert'])) {
-			$insert = $attributes['insert'];
-			unset($attributes['insert']);
-			$html = '';
-			foreach (static::inserts_processing([$in, $attributes], $insert) as $d) {
-				if (method_exists(get_called_class(), $tag)) {
-					$html .= static::$tag($d[0], $d[1]);
-				} elseif (in_array($tag, static::$unpaired_tags)) {
-					$d[1]['in'] = $d[0];
-					$html .= static::u_wrap($d[1], $tag);
-				} else {
-					$html .= static::wrap($d[0], $d[1], $tag ?: 'div');
-				}
-			}
-			return $html;
+			return static::process_inserts($tag, $in, $attributes);
 		}
 		if (method_exists(get_called_class(), $tag)) {
-			$in = static::$tag($in, $attributes);
+			return static::$tag($in, $attributes);
 		} elseif (in_array($tag, static::$unpaired_tags)) {
 			$attributes['in'] = $in;
-			$in               = static::u_wrap($attributes, $tag);
-		} else {
-			$in = static::wrap($in, $attributes, $tag ?: 'div');
+			return static::u_wrap($attributes, $tag);
 		}
-		return $in;
+		return static::wrap($in, $attributes, $tag ?: 'div');
 	}
 	/**
 	 * Analyze CSS selector for nester tags
@@ -1159,6 +1094,89 @@ class BananaHTML {
 			$attributes['id'] = $input[1];
 		}
 		return [$tag, $attributes];
+	}
+	/**
+	 * @param string $tag
+	 * @param array  $attributes
+	 *
+	 * @return array
+	 */
+	protected static function prepare_content ($tag, $attributes) {
+		$in = '';
+		if (
+			$tag == 'select' ||
+			$tag == 'optgroup' ||
+			$tag == 'datalist'
+		) {
+			$in = [
+				'in' => $attributes['in']
+			];
+			if (isset($attributes['value'])) {
+				$in['value'] = $attributes['value'];
+			}
+			unset($attributes['in'], $attributes['value']);
+		} elseif (isset($attributes['in'])) {
+			$in = $attributes['in'];
+			unset($attributes['in']);
+		}
+		return [$in, $attributes];
+	}
+	/**
+	 * @param string       $tag
+	 * @param array|string $in
+	 * @param array        $attributes
+	 *
+	 * @return string
+	 */
+	protected static function process_inserts ($tag, $in, $attributes) {
+		$insert = $attributes['insert'];
+		unset($attributes['insert']);
+		$html = '';
+		foreach (static::inserts_processing([$in, $attributes], $insert) as $d) {
+			if (method_exists(get_called_class(), $tag)) {
+				$html .= static::$tag($d[0], $d[1]);
+			} elseif (in_array($tag, static::$unpaired_tags)) {
+				$d[1]['in'] = $d[0];
+				$html .= static::u_wrap($d[1], $tag);
+			} else {
+				$html .= static::wrap($d[0], $d[1], $tag ?: 'div');
+			}
+		}
+		return $html;
+	}
+	/**
+	 * @param array|array[]    $data
+	 * @param array[]|string[] $insert
+	 *
+	 * @return string[]
+	 */
+	protected static function inserts_processing ($data, $insert) {
+		if (static::is_array_indexed($insert) && is_array($insert[0])) {
+			$new_data = [];
+			foreach ($insert as $i) {
+				$new_data[] = static::inserts_replacing_recursive($data, $i);
+			}
+			return $new_data;
+		}
+		return static::inserts_replacing_recursive($data, $insert);
+	}
+	/**
+	 * @param string|string[] $data
+	 * @param string[]        $insert
+	 *
+	 * @return string|string[]
+	 */
+	protected static function inserts_replacing_recursive ($data, $insert) {
+		if (is_array($data)) {
+			foreach ($data as &$d) {
+				$d = static::inserts_replacing_recursive($d, $insert);
+			}
+			return $data;
+		}
+		foreach ($insert as $i => $d) {
+			$data = str_replace("\$i[$i]", $d, $data);
+		}
+		return $data;
 	}
 	/**
 	 * Checks associativity of array
