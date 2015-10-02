@@ -767,20 +767,14 @@ class BananaHTML {
 				return static::render_array_of_elements($input, $data);
 			}
 			/**
-			 * If we have one element (indexed array) or second element is not index array - also render it like set of separate elements
+			 * If there are 2 elements, where first element is not an array, but second is not an array too or is indexed array - also render it like set of separate elements
 			 */
 			if (
-				/**
-				 * Fix for "select" and "datalist" tags because they accept arrays as values
-				 */
-				strpos($input, 'select') !== 0 &&
-				strpos($input, 'optgroup') !== 0 &&
-				strpos($input, 'datalist') !== 0 &&
-				strpos($input, 'input') !== 0 &&
-				static::is_array_indexed($data[0]) &&
+				isset($data[1]) &&
+				!is_array($data[0]) &&
 				(
-					!isset($data[1]) ||
-					!static::is_array_indexed($data[1])
+					!is_array($data[1]) ||
+					static::is_array_indexed($data[1])
 				)
 			) {
 				return static::render_array_of_elements($input, $data);
@@ -791,12 +785,11 @@ class BananaHTML {
 					/**
 					 * Fix for "select" and "datalist" tags because they accept arrays as values
 					 */
-					(
-						strpos($input, 'select') !== 0 &&
-						strpos($input, 'optgroup') !== 0 &&
-						strpos($input, 'datalist') !== 0
-					) ||
-					static::is_array_indexed($data[0][0])
+				(
+					strpos($input, 'select') !== 0 &&
+					strpos($input, 'optgroup') !== 0 &&
+					strpos($input, 'datalist') !== 0
+				)
 				)
 			) {
 				$output  = '';
@@ -843,14 +836,19 @@ class BananaHTML {
 				return $output;
 			}
 			/**
-			 * If there are 2 elements, where first element is not an array, but second is not an array too or is indexed array - also render it like set of separate elements
+			 * If we have one element (indexed array) or second element is not index array - also render it like set of separate elements
 			 */
 			if (
-				isset($data[1]) &&
-				!is_array($data[0]) &&
+				static::is_array_indexed($data[0]) &&
+				/**
+				 * Fix for "select" and "datalist" tags because they accept arrays as values
+				 */
+				strpos($input, 'select') !== 0 &&
+				strpos($input, 'optgroup') !== 0 &&
+				strpos($input, 'datalist') !== 0 &&
 				(
-					!is_array($data[1]) ||
-					static::is_array_indexed($data[1])
+					!isset($data[1]) ||
+					!static::is_array_indexed($data[1])
 				)
 			) {
 				return static::render_array_of_elements($input, $data);
@@ -944,7 +942,7 @@ class BananaHTML {
 							static::is_array_indexed($d[1])
 						)
 					) {
-						$output[] = static::render_array_of_elements($input[1], $d, true);
+						$output[] = static::render_array_of_elements($input[1], $d);
 					} else {
 						$output[] = [
 							static::__callStatic($input[1], $d[0]),
@@ -983,16 +981,15 @@ class BananaHTML {
 	/**
 	 * @param string $input
 	 * @param array  $data
-	 * @param bool   $as_array
 	 *
-	 * @return false|false[]|string|string[]
+	 * @return string
 	 */
-	protected static function render_array_of_elements ($input, $data, $as_array = false) {
-		$output = [];
+	protected static function render_array_of_elements ($input, $data) {
+		$output = '';
 		foreach ($data as $d) {
-			$output[] = static::__callStatic($input, $d);
+			$output .= static::__callStatic($input, $d);
 		}
-		return $as_array ? $output : implode('', $output);
+		return $output;
 	}
 	/**
 	 * Tag string might be complex and include id, class (classes) and attributes
