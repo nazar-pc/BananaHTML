@@ -798,7 +798,7 @@ class BananaHTML {
 					if (
 						!is_array($d) ||
 						!isset($d[1]) ||
-						!is_array($d[1])
+						!static::is_array_assoc($d[1])
 					) {
 						$output .= static::__callStatic(
 							$input,
@@ -807,22 +807,6 @@ class BananaHTML {
 								$data[1]
 							]
 						);
-					} elseif (static::is_array_indexed($d[1])) {
-						$output .=
-							static::__callStatic(
-								$input,
-								[
-									$d[0],
-									$data[1]
-								]
-							).
-							static::__callStatic(
-								$input,
-								[
-									$d[1],
-									$data[1]
-								]
-							);
 					} else {
 						$output .= static::__callStatic(
 							$input,
