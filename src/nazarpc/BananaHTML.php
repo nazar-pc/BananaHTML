@@ -13,30 +13,6 @@ namespace nazarpc;
  */
 class BananaHTML {
 	/**
-	 * Unit attributes, that have no value
-	 *
-	 * @var string[]
-	 */
-	protected static $known_unit_attributes = [
-		'async',
-		'defer',
-		'formnovalidate',
-		'autofocus',
-		'checked',
-		'selected',
-		'readonly',
-		'required',
-		'disabled',
-		'multiple',
-		'pubdate',
-		'noshade',
-		'autoplay',
-		'controls',
-		'loop',
-		'itemscope',
-		'no-label'
-	];
-	/**
 	 * Attributes that doesn't have closing tag
 	 *
 	 * @var string[]
@@ -784,13 +760,20 @@ class BananaHTML {
 		 * If associative array given then for every element of array separate copy of current tag will be created
 		 */
 		if (static::is_array_indexed($data)) {
+			/**
+			 * If there are more than elements - we clearly have to render it like set of separate elements
+			 */
 			if (count($data) > 2) {
 				$output = '';
 				foreach ($data as $d) {
 					$output .= static::__callStatic($input, $d);
 				}
 				return $output;
-			} elseif (
+			}
+			/**
+			 * If we have one element (indexed array) or second element is index array
+			 */
+			if (
 				/**
 				 * Fix for "select" and "datalist" tags because they accept arrays as values
 				 */
@@ -801,10 +784,7 @@ class BananaHTML {
 				static::is_array_indexed($data[0]) &&
 				(
 					!isset($data[1]) ||
-					!is_array($data[1]) ||
-					(
-						static::is_array_indexed($data[1]) && !in_array($data[1][0], static::$known_unit_attributes)
-					)
+					!static::is_array_indexed($data[1])
 				)
 			) {
 				$output = '';
@@ -812,7 +792,8 @@ class BananaHTML {
 					$output .= static::__callStatic($input, $d);
 				}
 				return $output;
-			} /** @noinspection NotOptimalIfConditionsInspection */ elseif (
+			}
+			if (
 				static::is_array_indexed($data[0]) &&
 				(
 					/**
@@ -823,9 +804,7 @@ class BananaHTML {
 						strpos($input, 'optgroup') !== 0 &&
 						strpos($input, 'datalist') !== 0
 					) ||
-					(
-						static::is_array_indexed($data[0][0]) && !in_array($data[0][0][0], static::$known_unit_attributes)
-					)
+					static::is_array_indexed($data[0][0])
 				)
 			) {
 				$output  = '';
@@ -843,7 +822,7 @@ class BananaHTML {
 								$data[1]
 							]
 						);
-					} elseif (static::is_array_indexed($d[1]) && !in_array($d[1], static::$known_unit_attributes)) {
+					} elseif (static::is_array_indexed($d[1])) {
 						$output .=
 							static::__callStatic(
 								$input,
@@ -870,15 +849,13 @@ class BananaHTML {
 					}
 				}
 				return $output;
-			} elseif (
+			}
+			if (
 				isset($data[1]) &&
 				!is_array($data[0]) &&
-				!in_array($data[0], static::$known_unit_attributes) &&
 				(
 					!is_array($data[1]) ||
-					(
-						static::is_array_indexed($data[1]) && !in_array($data[1][0], static::$known_unit_attributes)
-					)
+					static::is_array_indexed($data[1])
 				)
 			) {
 				$output = '';
@@ -971,14 +948,12 @@ class BananaHTML {
 				$data = [$data];
 			}
 			foreach ($data[0] as $d) {
-				if (isset($d[0]) && static::is_array_indexed($d[0]) && !in_array($d[0][0], static::$known_unit_attributes)) {
+				if (isset($d[0]) && static::is_array_indexed($d[0])) {
 					if (
 						isset($d[1]) &&
 						(
 							!is_array($d[1]) ||
-							(
-								static::is_array_indexed($d[1]) && !in_array($d[1][0], static::$known_unit_attributes)
-							)
+							static::is_array_indexed($d[1])
 						)
 					) {
 						$output_ = [];
