@@ -27,6 +27,15 @@ echo h::optgroup(
 		'second'
 	]
 );
+echo h::{'label select'}(
+	[
+		'first',
+		'second'
+	],
+	[
+		'selected' => 'second'
+	]
+);
 ?>
 --EXPECT--
 <datalist>
@@ -41,3 +50,9 @@ echo h::optgroup(
 	<option selected value="first">first</option>
 	<option value="second">second</option>
 </optgroup>
+<label>
+	<select>
+		<option value="first">first</option>
+		<option selected value="second">second</option>
+	</select>
+</label>

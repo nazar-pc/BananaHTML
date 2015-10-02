@@ -747,16 +747,6 @@ class BananaHTML {
 			$data  = [$data];
 		}
 		/**
-		 * Fix for textarea tag, which can accept array as content
-		 */
-		if (
-			isset($data[0]) &&
-			strpos($input, 'textarea') === 0 &&
-			static::is_array_indexed($data[0]) && !is_array($data[0][0])
-		) {
-			$data[0] = implode("\n", $data[0]);
-		}
-		/**
 		 * If associative array given then for every element of array separate copy of current tag will be created
 		 */
 		if (static::is_array_indexed($data)) {
@@ -783,13 +773,12 @@ class BananaHTML {
 				static::is_array_indexed($data[0]) &&
 				(
 					/**
-					 * Fix for "select" and "datalist" tags because they accept arrays as values
+					 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
 					 */
-				(
+					strpos($input, 'textarea') !== 0 &&
 					strpos($input, 'select') !== 0 &&
 					strpos($input, 'optgroup') !== 0 &&
 					strpos($input, 'datalist') !== 0
-				)
 				)
 			) {
 				$output  = '';
@@ -825,8 +814,9 @@ class BananaHTML {
 			if (
 				static::is_array_indexed($data[0]) &&
 				/**
-				 * Fix for "select" and "datalist" tags because they accept arrays as values
+				 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
 				 */
+				strpos($input, 'textarea') !== 0 &&
 				strpos($input, 'select') !== 0 &&
 				strpos($input, 'optgroup') !== 0 &&
 				strpos($input, 'datalist') !== 0 &&
@@ -839,13 +829,14 @@ class BananaHTML {
 			}
 		}
 		if (isset($data[0])) {
-			/**
-			 * Second part of expression - fix for "select" and "datalist" tags because they accept array as values
-			 */
 			if (
 				!is_array($data[0]) ||
 				(
 					(
+						/**
+						 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
+						 */
+						strpos($input, 'textarea') === 0 ||
 						strpos($input, 'select') === 0 ||
 						strpos($input, 'optgroup') === 0 ||
 						strpos($input, 'datalist') === 0

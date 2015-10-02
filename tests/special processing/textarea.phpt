@@ -11,8 +11,19 @@ echo h::textarea(
 		'line3'
 	]
 );
+echo h::{'p textarea'}(
+	[
+		'line1',
+		'line2',
+		'line3'
+	]
+);
 ?>
 --EXPECT--
 <textarea>Content</textarea><textarea>line1
 line2
-line3</textarea>
+line3</textarea><p>
+	<textarea>line1
+	line2
+	line3</textarea>
+</p>
