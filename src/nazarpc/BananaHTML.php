@@ -764,14 +764,10 @@ class BananaHTML {
 			 * If there are more than elements - we clearly have to render it like set of separate elements
 			 */
 			if (count($data) > 2) {
-				$output = '';
-				foreach ($data as $d) {
-					$output .= static::__callStatic($input, $d);
-				}
-				return $output;
+				return static::render_array_of_elements($input, $data);
 			}
 			/**
-			 * If we have one element (indexed array) or second element is index array
+			 * If we have one element (indexed array) or second element is not index array - also render it like set of separate elements
 			 */
 			if (
 				/**
@@ -787,11 +783,7 @@ class BananaHTML {
 					!static::is_array_indexed($data[1])
 				)
 			) {
-				$output = '';
-				foreach ($data as $d) {
-					$output .= static::__callStatic($input, $d);
-				}
-				return $output;
+				return static::render_array_of_elements($input, $data);
 			}
 			if (
 				static::is_array_indexed($data[0]) &&
@@ -850,6 +842,9 @@ class BananaHTML {
 				}
 				return $output;
 			}
+			/**
+			 * If there are 2 elements, where first element is not an array, but second is not an array too or is indexed array - also render it like set of separate elements
+			 */
 			if (
 				isset($data[1]) &&
 				!is_array($data[0]) &&
@@ -858,14 +853,7 @@ class BananaHTML {
 					static::is_array_indexed($data[1])
 				)
 			) {
-				$output = '';
-				foreach ($data as $d) {
-					$output .= static::__callStatic(
-						$input,
-						$d
-					);
-				}
-				return $output;
+				return static::render_array_of_elements($input, $data);
 			}
 		}
 		if (isset($data[0])) {
@@ -996,6 +984,19 @@ class BananaHTML {
 				isset($data[1]) ? $data[1] : false
 			]
 		);
+	}
+	/**
+	 * @param string $input
+	 * @param array  $data
+	 *
+	 * @return string
+	 */
+	protected static function render_array_of_elements ($input, $data) {
+		$output = '';
+		foreach ($data as $d) {
+			$output .= static::__callStatic($input, $d);
+		}
+		return $output;
 	}
 	/**
 	 * Tag string might be complex and include id, class (classes) and attributes
