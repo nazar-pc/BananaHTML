@@ -985,7 +985,7 @@ class BananaHTML {
 	 * @param array  $data
 	 * @param bool   $as_array
 	 *
-	 * @return string
+	 * @return false|false[]|string|string[]
 	 */
 	protected static function render_array_of_elements ($input, $data, $as_array = false) {
 		$output = [];
