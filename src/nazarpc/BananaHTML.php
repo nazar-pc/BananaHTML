@@ -747,6 +747,14 @@ class BananaHTML {
 			$data  = [$data];
 		}
 		/**
+		 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
+		 */
+		$element_that_supports_indexed_array_content =
+			strpos($input, 'textarea') === 0 ||
+			strpos($input, 'select') === 0 ||
+			strpos($input, 'optgroup') === 0 ||
+			strpos($input, 'datalist') === 0;
+		/**
 		 * If associative array given then for every element of array separate copy of current tag will be created
 		 */
 		if (static::is_array_indexed($data)) {
@@ -770,16 +778,8 @@ class BananaHTML {
 				return static::render_array_of_elements($input, $data);
 			}
 			if (
-				static::is_array_indexed($data[0]) &&
-				(
-					/**
-					 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
-					 */
-					strpos($input, 'textarea') !== 0 &&
-					strpos($input, 'select') !== 0 &&
-					strpos($input, 'optgroup') !== 0 &&
-					strpos($input, 'datalist') !== 0
-				)
+				!$element_that_supports_indexed_array_content &&
+				static::is_array_indexed($data[0])
 			) {
 				$output  = '';
 				$data[1] = isset($data[1]) ? $data[1] : [];
@@ -812,14 +812,8 @@ class BananaHTML {
 			 * If we have one element (indexed array) or second element is not index array - also render it like set of separate elements
 			 */
 			if (
+				!$element_that_supports_indexed_array_content &&
 				static::is_array_indexed($data[0]) &&
-				/**
-				 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
-				 */
-				strpos($input, 'textarea') !== 0 &&
-				strpos($input, 'select') !== 0 &&
-				strpos($input, 'optgroup') !== 0 &&
-				strpos($input, 'datalist') !== 0 &&
 				(
 					!isset($data[1]) ||
 					!static::is_array_indexed($data[1])
@@ -832,15 +826,7 @@ class BananaHTML {
 			if (
 				!is_array($data[0]) ||
 				(
-					(
-						/**
-						 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
-						 */
-						strpos($input, 'textarea') === 0 ||
-						strpos($input, 'select') === 0 ||
-						strpos($input, 'optgroup') === 0 ||
-						strpos($input, 'datalist') === 0
-					) &&
+					$element_that_supports_indexed_array_content &&
 					!isset($data[0]['in'])
 				)
 			) {
