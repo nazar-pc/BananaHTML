@@ -739,7 +739,7 @@ class BananaHTML {
 			$array1['style'] = trim($array1['style'], ';').";$array2[style]";
 			unset($array2['style']);
 		}
-		return $array2 + $array1;
+		return array_merge($array1, $array2);
 	}
 	/**
 	 * Processing of complicated rendering structures
