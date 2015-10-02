@@ -797,10 +797,7 @@ class BananaHTML {
 			if (count($data) > 2) {
 				$output = '';
 				foreach ($data as $d) {
-					$output .= static::__callStatic(
-						$input,
-						$d
-					);
+					$output .= static::__callStatic($input, $d);
 				}
 				return $output;
 			} elseif (
@@ -848,8 +845,8 @@ class BananaHTML {
 				foreach ((array)$data[0] as $d) {
 					$data[1] = isset($data[1]) ? $data[1] : [];
 					if (
-						!isset($d[1]) ||
 						!is_array($d) ||
+						!isset($d[1]) ||
 						!is_array($d[1])
 					) {
 						$output .= static::__callStatic(
