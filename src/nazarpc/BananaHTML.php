@@ -944,12 +944,7 @@ class BananaHTML {
 							static::is_array_indexed($d[1])
 						)
 					) {
-						$output_ = [];
-						foreach ($d as $d_) {
-							$output_[] = static::__callStatic($input[1], $d_);
-						}
-						$output[] = $output_;
-						unset($output_);
+						$output[] = static::render_array_of_elements($input[1], $d, true);
 					} else {
 						$output[] = [
 							static::__callStatic($input[1], $d[0]),
@@ -988,15 +983,16 @@ class BananaHTML {
 	/**
 	 * @param string $input
 	 * @param array  $data
+	 * @param bool   $as_array
 	 *
 	 * @return string
 	 */
-	protected static function render_array_of_elements ($input, $data) {
-		$output = '';
+	protected static function render_array_of_elements ($input, $data, $as_array = false) {
+		$output = [];
 		foreach ($data as $d) {
-			$output .= static::__callStatic($input, $d);
+			$output[] = static::__callStatic($input, $d);
 		}
-		return $output;
+		return $as_array ? $output : implode('', $output);
 	}
 	/**
 	 * Tag string might be complex and include id, class (classes) and attributes
