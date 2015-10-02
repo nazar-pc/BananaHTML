@@ -230,7 +230,7 @@ class BananaHTML {
 	 * @return false|string
 	 */
 	protected static function wrap ($in, $data, $tag) {
-		$data  = static::array_merge(is_array($in) ? $in : ['in' => $in], is_array($data) ? $data : []);
+		$data  = static::smart_array_merge(is_array($in) ? $in : ['in' => $in], is_array($data) ? $data : []);
 		$in    = $attributes = '';
 		$level = 1;
 		if (isset($data['level'])) {
@@ -721,35 +721,25 @@ class BananaHTML {
 		return str_repeat("<br>\n", $repeat);
 	}
 	/**
-	 * Merging of arrays, but joining all 'class' and 'style' items, supports 2-3 arrays for input
+	 * Merging of arrays, but joining all 'class' and 'style' items, supports only 2 arrays as input
 	 *
 	 * @static
 	 *
 	 * @param array $array1
 	 * @param array $array2
-	 * @param array $array3
 	 *
 	 * @return array
 	 */
-	protected static function array_merge ($array1, $array2, $array3 = []) {
+	protected static function smart_array_merge ($array1, $array2) {
 		if (isset($array1['class'], $array2['class'])) {
 			$array1['class'] .= " $array2[class]";
 			unset($array2['class']);
 		}
-		if (isset($array1['class'], $array3['class'])) {
-			$array1['class'] .= " $array3[class]";
-			unset($array3['class']);
-		}
 		if (isset($array1['style'], $array2['style'])) {
-			$array1['style'] .= $array2['style'];
+			$array1['style'] = trim($array1['style'], ';').";$array2[style]";
 			unset($array2['style']);
 		}
-		if (isset($array1['style'], $array3['style'])) {
-			$array1['style'] .= $array3['style'];
-			unset($array3['class']);
-		}
-		/** @noinspection AdditionOperationOnArraysInspection */
-		return $array3 + $array2 + $array1;
+		return $array2 + $array1;
 	}
 	/**
 	 * Processing of complicated rendering structures
@@ -819,10 +809,7 @@ class BananaHTML {
 			) {
 				$output = '';
 				foreach ($data as $d) {
-					$output .= static::__callStatic(
-						$input,
-						$d
-					);
+					$output .= static::__callStatic($input, $d);
 				}
 				return $output;
 			} /** @noinspection NotOptimalIfConditionsInspection */ elseif (
@@ -841,9 +828,9 @@ class BananaHTML {
 					)
 				)
 			) {
-				$output = '';
+				$output  = '';
+				$data[1] = isset($data[1]) ? $data[1] : [];
 				foreach ((array)$data[0] as $d) {
-					$data[1] = isset($data[1]) ? $data[1] : [];
 					if (
 						!is_array($d) ||
 						!isset($d[1]) ||
@@ -857,26 +844,27 @@ class BananaHTML {
 							]
 						);
 					} elseif (static::is_array_indexed($d[1]) && !in_array($d[1], static::$known_unit_attributes)) {
-						$output .= static::__callStatic(
+						$output .=
+							static::__callStatic(
 								$input,
 								[
 									$d[0],
 									$data[1]
 								]
 							).
-								   static::__callStatic(
-									   $input,
-									   [
-										   $d[1],
-										   $data[1]
-									   ]
-								   );
+							static::__callStatic(
+								$input,
+								[
+									$d[1],
+									$data[1]
+								]
+							);
 					} else {
 						$output .= static::__callStatic(
 							$input,
 							[
 								$d[0],
-								static::array_merge($data[1], $d[1])
+								static::smart_array_merge($data[1], $d[1])
 							]
 						);
 					}
@@ -920,10 +908,10 @@ class BananaHTML {
 			) {
 				$data[0] = ['in' => $data[0]];
 			}
-			$data = isset($data[1]) ? static::array_merge($data[0], $data[1]) : $data[0];
+			$data = isset($data[1]) ? static::smart_array_merge($data[0], $data[1]) : $data[0];
 		}
 		list($tag, $attributes) = static::parse_tag_string($input);
-		$attributes = static::array_merge($attributes, $data);
+		$attributes = static::smart_array_merge($attributes, $data);
 		list($in, $attributes) = static::prepare_content($tag, $attributes);
 		if (isset($attributes['insert'])) {
 			return static::process_inserts($tag, $in, $attributes);
