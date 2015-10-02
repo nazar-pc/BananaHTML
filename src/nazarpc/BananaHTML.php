@@ -748,12 +748,9 @@ class BananaHTML {
 		}
 		/**
 		 * Fix for `<textarea>`, `<select>`, `<optgroup>` and `<datalist>` tags because they accept indexed arrays as content by themselves
+		 * `\b(..)` is used to capture words only (string might be quite complex, this will help to avoid some false-positive results, other should be avoided intentionally)
 		 */
-		$element_that_supports_indexed_array_content =
-			strpos($input, 'textarea') === 0 ||
-			strpos($input, 'select') === 0 ||
-			strpos($input, 'optgroup') === 0 ||
-			strpos($input, 'datalist') === 0;
+		$element_that_supports_indexed_array_content = preg_match('/\b(textarea|select|optgroup|datalist)/', $input);
 		/**
 		 * If associative array given then for every element of array separate copy of current tag will be created
 		 */
