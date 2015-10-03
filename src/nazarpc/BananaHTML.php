@@ -767,7 +767,7 @@ class BananaHTML {
 			 */
 			if (
 				isset($data[1]) &&
-				!is_array($data[0]) &&
+				!static::is_array_assoc($data[0]) &&
 				(
 					!is_array($data[1]) ||
 					static::is_array_indexed($data[1])
