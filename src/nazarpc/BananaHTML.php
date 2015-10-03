@@ -191,9 +191,10 @@ class BananaHTML {
 	 *
 	 * @static
 	 *
-	 * @param array $attributes
+	 * @param string $tag
+	 * @param array  $attributes
 	 */
-	protected static function pre_processing (&$attributes) { }
+	protected static function pre_processing ($tag, &$attributes) { }
 	/**
 	 * Wrapper for paired tags rendering
 	 *
@@ -213,7 +214,7 @@ class BananaHTML {
 			$level = $data['level'];
 			unset($data['level']);
 		}
-		static::pre_processing($data);
+		static::pre_processing($tag, $data);
 		if (!static::data_prepare($data, $tag, $in, $attributes)) {
 			return false;
 		}
