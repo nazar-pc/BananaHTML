@@ -249,7 +249,7 @@ class BananaHTML {
 	 */
 	protected static function u_wrap ($data, $tag) {
 		$in = $attributes = '';
-		static::pre_processing($data);
+		static::pre_processing($tag, $data);
 		if (!static::data_prepare($data, $tag, $in, $attributes)) {
 			return false;
 		}
