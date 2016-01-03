@@ -1,9 +1,9 @@
 <?php
 /**
- * @package        BananaHTML
- * @author         Nazar Mokrynskyi <nazar@mokrynskyi.com>
- * @copyright      Copyright (c) 2011-2015, Nazar Mokrynskyi
- * @license        MIT License, see license.txt
+ * @package   BananaHTML
+ * @author    Nazar Mokrynskyi <nazar@mokrynskyi.com>
+ * @copyright Copyright (c) 2011-2016, Nazar Mokrynskyi
+ * @license   MIT License, see license.txt
  */
 namespace nazarpc;
 /**
@@ -233,7 +233,7 @@ class BananaHTML {
 				strpos($in, '<') !== false
 			)
 		) {
-			$in = $level ? "\n".static::level("$in\n", $level) : "\n$in\n";;
+			$in = $level ? "\n".static::level("$in\n", $level) : "\n$in\n";
 		}
 		return "<$tag$attributes>$in</$tag>".($level ? "\n" : '');
 	}
@@ -561,7 +561,7 @@ class BananaHTML {
 		if (is_array($in)) {
 			if (isset($in['in'])) {
 				$in['in'] = static::indentation_protection(is_array($in['in']) ? implode("\n", $in['in']) : $in['in']);
-			} else {
+			} elseif (self::is_array_indexed($in)) {
 				$in = static::indentation_protection(implode("\n", $in));
 			}
 		} else {
@@ -1142,7 +1142,6 @@ class BananaHTML {
 		foreach ($array as $values) {
 			$size = max($size, count((array)$values));
 		}
-		unset($values);
 		foreach ($array as $key => $values) {
 			for ($i = 0; $i < $size; ++$i) {
 				if (is_array($values)) {

@@ -18,6 +18,11 @@ echo h::{'p textarea'}(
 		'line3'
 	]
 );
+echo h::textarea(
+	[
+		'placeholder' => 'Some placeholder text'
+	]
+);
 ?>
 --EXPECT--
 <textarea>Content</textarea><textarea>line1
@@ -27,3 +32,4 @@ line3</textarea><p>
 	line2
 	line3</textarea>
 </p>
+<textarea placeholder="Some placeholder text"></textarea>
