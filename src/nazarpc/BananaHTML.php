@@ -784,7 +784,7 @@ class BananaHTML {
 			) {
 				$output  = '';
 				$data[1] = isset($data[1]) ? $data[1] : [];
-				foreach ((array)$data[0] as $d) {
+				foreach ($data[0] as $d) {
 					if (
 						!is_array($d) ||
 						!isset($d[1]) ||
@@ -915,7 +915,6 @@ class BananaHTML {
 					$output[] = static::__callStatic_internal($selector[1], $d);
 				}
 			}
-			unset($d);
 		} elseif (!isset($data[1]) || static::is_array_assoc($data[1])) {
 			$output  = static::__callStatic_internal(
 				$selector[1],
