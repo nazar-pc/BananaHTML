@@ -822,8 +822,6 @@ class BananaHTML {
 			) {
 				return static::render_array_of_elements($selector, $data);
 			}
-		}
-		if (isset($data[0])) {
 			if (
 				!is_array($data[0]) ||
 				(
@@ -1140,7 +1138,6 @@ class BananaHTML {
 		foreach ($array as $values) {
 			$size = max($size, count((array)$values));
 		}
-		unset($values);
 		foreach ($array as $key => $values) {
 			for ($i = 0; $i < $size; ++$i) {
 				if (is_array($values)) {
