@@ -10,6 +10,18 @@ echo h::{'tr| td'}(
 		'Third cell'
 	]
 );
+echo h::{'table tr| td'}(
+	[
+		'x',
+		'y',
+		'z'
+	],
+	[
+		'x',
+		'y',
+		'z'
+	]
+);
 ?>
 --EXPECT--
 <tr>
@@ -21,3 +33,15 @@ echo h::{'tr| td'}(
 <tr>
 	<td>Third cell</td>
 </tr>
+<table>
+	<tr>
+		<td>x</td>
+		<td>y</td>
+		<td>z</td>
+	</tr>
+	<tr>
+		<td>x</td>
+		<td>y</td>
+		<td>z</td>
+	</tr>
+</table>
