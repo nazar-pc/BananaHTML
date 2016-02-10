@@ -733,10 +733,6 @@ class BananaHTML {
 		if (is_array($selector)) {
 			return static::handle_nested_selectors($selector, $data);
 		}
-		if (substr($selector, -1) == '|') {
-			$selector = substr($selector, 0, -1);
-			$data     = [$data];
-		}
 		return static::__callStatic_internal($selector, $data);
 	}
 	/**
