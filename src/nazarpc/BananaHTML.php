@@ -726,6 +726,10 @@ class BananaHTML {
 		if ($data === false || $data === [false]) {
 			return false;
 		}
+		$fast_render = static::__callStatic_fast_render($selector, $data);
+		if ($fast_render) {
+			return $fast_render;
+		}
 		$selector = static::parse_nesting_selector(trim($selector));
 		/**
 		 * Analysis of called tag. If nested tags presented
@@ -733,7 +737,7 @@ class BananaHTML {
 		if (is_array($selector)) {
 			return static::handle_nested_selectors($selector, $data);
 		}
-		return static::__callStatic_fast_render($selector, $data) ?: static::__callStatic_internal($selector, $data);
+		return static::__callStatic_internal($selector, $data);
 	}
 	/**
 	 * Trying to render faster, many practical use cases fit here, so overhead should worth it
@@ -745,9 +749,10 @@ class BananaHTML {
 	 */
 	protected static function __callStatic_fast_render ($selector, $data) {
 		if (
-			strpos($selector, '#') === false &&
-			strpos($selector, '.') === false &&
+			strpos($selector, ' ') === false &&
 			strpos($selector, '[') === false &&
+			strpos($selector, '.') === false &&
+			strpos($selector, '#') === false &&
 			!isset($data[1]) &&
 			count($data) == 1 &&
 			(
