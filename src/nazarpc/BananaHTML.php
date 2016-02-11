@@ -733,7 +733,35 @@ class BananaHTML {
 		if (is_array($selector)) {
 			return static::handle_nested_selectors($selector, $data);
 		}
-		return static::__callStatic_internal($selector, $data);
+		return static::__callStatic_fast_render($selector, $data) ?: static::__callStatic_internal($selector, $data);
+	}
+	/**
+	 * Trying to render faster, many practical use cases fit here, so overhead should worth it
+	 *
+	 * @param string $selector
+	 * @param array  $data
+	 *
+	 * @return null|string
+	 */
+	protected static function __callStatic_fast_render ($selector, $data) {
+		if (
+			strpos($selector, '#') === false &&
+			strpos($selector, '.') === false &&
+			strpos($selector, '[') === false &&
+			!isset($data[1]) &&
+			count($data) == 1 &&
+			(
+				($data_0_scalar = is_scalar($data[0])) ||
+				(
+					static::is_array_assoc($data[0]) &&
+					!isset($data[0]['in']) &&
+					!isset($data[0]['insert'])
+				)
+			)
+		) {
+			return static::render_tag($selector, $data_0_scalar ? $data[0] : '', $data_0_scalar ? [] : $data[0]);
+		}
+		return null;
 	}
 	/**
 	 * @param string            $selector
@@ -989,7 +1017,6 @@ class BananaHTML {
 		 *
 		 * Allows to write BananaHTML::custom_tag() that will be translated to <custom-tag></custom-tag>
 		 */
-		$tag = str_replace('_', '-', $tag);
 		if (isset($selector[1])) {
 			$attributes['id'] = $selector[1];
 		}
@@ -1079,6 +1106,7 @@ class BananaHTML {
 	 * @return false|string
 	 */
 	protected static function render_tag ($tag, $in, $attributes) {
+		$tag = str_replace('_', '-', $tag);
 		if (method_exists(get_called_class(), $tag)) {
 			return static::$tag($in, $attributes);
 		} elseif (isset(static::$unpaired_tags[$tag])) {
