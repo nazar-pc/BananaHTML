@@ -749,12 +749,13 @@ class BananaHTML {
 	 */
 	protected static function __callStatic_fast_render ($selector, $data) {
 		if (
+			is_array($data) &&
+			isset($data[0]) &&
+			count($data) == 1 &&
 			strpos($selector, ' ') === false &&
 			strpos($selector, '[') === false &&
 			strpos($selector, '.') === false &&
 			strpos($selector, '#') === false &&
-			!isset($data[1]) &&
-			count($data) == 1 &&
 			(
 				($data_0_scalar = is_scalar($data[0])) ||
 				(
