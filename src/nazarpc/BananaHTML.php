@@ -755,17 +755,18 @@ class BananaHTML {
 			strpos($selector, ' ') === false &&
 			strpos($selector, '[') === false &&
 			strpos($selector, '.') === false &&
-			strpos($selector, '#') === false &&
-			(
-				($data_0_scalar = is_scalar($data[0])) ||
-				(
-					static::is_array_assoc($data[0]) &&
-					!isset($data[0]['in']) &&
-					!isset($data[0]['insert'])
-				)
-			)
+			strpos($selector, '#') === false
 		) {
-			return static::render_tag($selector, $data_0_scalar ? $data[0] : '', $data_0_scalar ? [] : $data[0]);
+			if (is_scalar($data[0])) {
+				return static::render_tag($selector, $data[0], []);
+			}
+			if (
+				!isset($data[0]['in']) &&
+				!isset($data[0]['insert']) &&
+				static::is_array_assoc($data[0])
+			) {
+				return static::render_tag($selector, '', $data[0]);
+			}
 		}
 		return null;
 	}
