@@ -20,6 +20,7 @@ echo h::{'tr.row td.cs-left[style=text-align:left;][colspan=2]'}(
 		]
 	]
 );
+echo h::{'table thead tr td[colspan=2]'}();
 ?>
 --EXPECT--
 <tr class="row">
@@ -27,3 +28,10 @@ echo h::{'tr.row td.cs-left[style=text-align:left;][colspan=2]'}(
 	<td class="cs-left middle-cell" colspan="1" style="text-align:left;color:red;">Second cell</td>
 	<td class="cs-left" style="text-align:left;">Third cell</td>
 </tr>
+<table>
+	<thead>
+		<tr>
+			<td colspan="2"></td>
+		</tr>
+	</thead>
+</table>
