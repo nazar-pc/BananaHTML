@@ -2,7 +2,7 @@
 /**
  * @package   BananaHTML
  * @author    Nazar Mokrynskyi <nazar@mokrynskyi.com>
- * @copyright Copyright (c) 2011-2016, Nazar Mokrynskyi
+ * @copyright Copyright (c) 2011-2017, Nazar Mokrynskyi
  * @license   MIT License, see license.txt
  */
 namespace nazarpc;
@@ -327,6 +327,9 @@ class BananaHTML {
 	 * @return array
 	 */
 	protected static function input_merge ($in, $data) {
+		if (is_string($in)) {
+			$in = ['in' => $in];
+		}
 		return !$data ? $in : array_merge(
 			static::is_array_assoc($in) ? $in : ['in' => $in],
 			$data
